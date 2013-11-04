@@ -5,11 +5,21 @@ package libvirt
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
 #include <stdlib.h>
+
+static void customErrorFunc(void *userdata, virErrorPtr err) {
+	//This empty custom error handler function
+	//avoids libvirt printing
+	//errors in stderr and leaves Go take over seamlessly
+}
+
+static void setCustomErrorHandler() {
+	virSetErrorFunc(NULL, customErrorFunc);
+}
 */
 import "C"
 
+//virErrorDomain
 const (
-	//virErrorDomain
 	VIR_FROM_NONE            = C.VIR_FROM_NONE
 	VIR_FROM_XEN             = C.VIR_FROM_XEN             //Error at Xen hypervisor layer
 	VIR_FROM_XEND            = C.VIR_FROM_XEND            //Error at connection with xend daemon
@@ -66,13 +76,17 @@ const (
 	VIR_FROM_ACCESS          = C.VIR_FROM_ACCESS          //Error from access control manager
 	VIR_FROM_SYSTEMD         = C.VIR_FROM_SYSTEMD         //Error from systemd code
 	//VIR_ERR_DOMAIN_LAST      = C.VIR_ERR_DOMAIN_LAST
+)
 
-	//virErrorLevel
+//virErrorLevel
+const (
 	VIR_ERR_NONE    = C.VIR_ERR_NONE
 	VIR_ERR_WARNING = C.VIR_ERR_WARNING
 	VIR_ERR_ERROR   = C.VIR_ERR_ERROR
+)
 
-	//virErrorNumber
+//virErrorNumber
+const (
 	VIR_ERR_OK                      = C.VIR_ERR_OK
 	VIR_ERR_INTERNAL_ERROR          = C.VIR_ERR_INTERNAL_ERROR          //internal error
 	VIR_ERR_NO_MEMORY               = C.VIR_ERR_NO_MEMORY               //memory allocation failure
@@ -167,20 +181,24 @@ const (
 
 type LibvirtError struct {
 	ptr     C.virErrorPtr
-	Code    int
-	Domain  int
-	Message string
-	Level   int
-	Str1    string
-	Str2    string
-	Str3    string
-	Int1    int
-	Int2    int
+	Code    int    //The error code, see virErrorNumbers
+	Domain  int    //An enum indicating which part of libvirt raised the error see virErrorDomain
+	Message string //the full human-readable formatted string of the error
+	Level   int    //the error level, usually VIR_ERR_ERROR, though there is room for warnings like VIR_ERR_WARNING
+	Str1    string //extra string information
+	Str2    string //extra string information
+	Str3    string //extra string information
+	Int1    int    //extra number information
+	Int2    int    //extra number information
 }
 
-func NewLibvirtError(err C.virErrorPtr) *LibvirtError {
+func init() {
+	C.setCustomErrorHandler()
+}
+
+func newLibvirtError(err C.virErrorPtr) *LibvirtError {
 	if err == nil {
-		panic("A virErrorPtr C pointer is required")
+		return nil
 	}
 
 	return &LibvirtError{
@@ -198,5 +216,12 @@ func NewLibvirtError(err C.virErrorPtr) *LibvirtError {
 }
 
 func GetLastError() *LibvirtError {
-	return NewLibvirtError(C.virGetLastError())
+	err := C.virGetLastError()
+	defer C.virResetError(err)
+
+	return newLibvirtError(err)
+}
+
+func (e *LibvirtError) Error() string {
+	return e.Message
 }
