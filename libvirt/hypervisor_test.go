@@ -285,3 +285,12 @@ func TestIsConnectionAlive(t *testing.T) {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", alive, true)
 	}
 }
+
+func TestListDomains(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	domains, _ := h.ListDomains(0)
+	length := len(domains)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
+	}
+}

@@ -20,6 +20,9 @@ int blah(const char** xmls, uint len) {
 import "C"
 
 import (
+	//"bytes"
+	//"encoding/binary"
+	//"fmt"
 	"unsafe"
 )
 
@@ -66,6 +69,24 @@ const (
 //virConnectBaselineCPU - Only works for Qemu
 const (
 	VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES = C.VIR_CONNECT_BASELINE_CPU_EXPAND_FEATURES //show all the features
+)
+
+//virConnectListAllDomainsFlags
+const (
+	VIR_CONNECT_LIST_DOMAINS_ACTIVE         = C.VIR_CONNECT_LIST_DOMAINS_ACTIVE
+	VIR_CONNECT_LIST_DOMAINS_INACTIVE       = C.VIR_CONNECT_LIST_DOMAINS_INACTIVE
+	VIR_CONNECT_LIST_DOMAINS_PERSISTENT     = C.VIR_CONNECT_LIST_DOMAINS_PERSISTENT
+	VIR_CONNECT_LIST_DOMAINS_TRANSIENT      = C.VIR_CONNECT_LIST_DOMAINS_TRANSIENT
+	VIR_CONNECT_LIST_DOMAINS_RUNNING        = C.VIR_CONNECT_LIST_DOMAINS_RUNNING
+	VIR_CONNECT_LIST_DOMAINS_PAUSED         = C.VIR_CONNECT_LIST_DOMAINS_PAUSED
+	VIR_CONNECT_LIST_DOMAINS_SHUTOFF        = C.VIR_CONNECT_LIST_DOMAINS_SHUTOFF
+	VIR_CONNECT_LIST_DOMAINS_OTHER          = C.VIR_CONNECT_LIST_DOMAINS_OTHER
+	VIR_CONNECT_LIST_DOMAINS_MANAGEDSAVE    = C.VIR_CONNECT_LIST_DOMAINS_MANAGEDSAVE
+	VIR_CONNECT_LIST_DOMAINS_NO_MANAGEDSAVE = C.VIR_CONNECT_LIST_DOMAINS_NO_MANAGEDSAVE
+	VIR_CONNECT_LIST_DOMAINS_AUTOSTART      = C.VIR_CONNECT_LIST_DOMAINS_AUTOSTART
+	VIR_CONNECT_LIST_DOMAINS_NO_AUTOSTART   = C.VIR_CONNECT_LIST_DOMAINS_NO_AUTOSTART
+	VIR_CONNECT_LIST_DOMAINS_HAS_SNAPSHOT   = C.VIR_CONNECT_LIST_DOMAINS_HAS_SNAPSHOT
+	VIR_CONNECT_LIST_DOMAINS_NO_SNAPSHOT    = C.VIR_CONNECT_LIST_DOMAINS_NO_SNAPSHOT
 )
 
 type Hypervisor struct {
@@ -229,7 +250,10 @@ func (h *Hypervisor) GetLibVirtVersion() (map[string]int, error) {
 }
 
 func (h *Hypervisor) GetMaxVcpus(dtype string) (uint8, error) {
-	result := C.virConnectGetMaxVcpus(h.cptr, C.CString(dtype))
+	domainType := C.CString(dtype)
+	defer C.free(unsafe.Pointer(domainType))
+
+	result := C.virConnectGetMaxVcpus(h.cptr, domainType)
 	if result == -1 {
 		return uint8(result), GetLastError()
 	}
@@ -280,11 +304,32 @@ func (h *Hypervisor) IsConnectionAlive() (bool, error) {
 }
 
 //virConnectList functions
-func (h *Hypervisor) GetDefinedDomains()      {}
+func (h *Hypervisor) ListDomains(flags uint) ([]*Domain, error) {
+	var cdomains *C.virDomainPtr
+	result := C.virConnectListAllDomains(h.cptr, &cdomains, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var domains = make([]*Domain, result)
+	p := (*[1 << 30]C.virDomainPtr)(unsafe.Pointer(cdomains))
+
+	for i := 0; i < int(result); i++ {
+		domains[i] = newDomain(p[i])
+	}
+	defer C.free(unsafe.Pointer(cdomains))
+
+	return domains, nil
+}
+
+//func (h *Hypervisor) GetDefinedDomains()      {}
+//func (h *Hypervisor) GetActiveDomains()       {}
+//func (h *Hypervisor) GetNumberOfDefinedDomains() {}
+//func (h *Hypervisor) GetNumberOfActiveDomains() {}
+
 func (h *Hypervisor) GetDefinedInterfaces()   {}
 func (h *Hypervisor) GetDefinedNetworks()     {}
 func (h *Hypervisor) GetDefinedStoragePools() {}
-func (h *Hypervisor) GetActiveDomains()       {}
 func (h *Hypervisor) GetActiveInterfaces()    {}
 func (h *Hypervisor) GetNetworkFilters()      {}
 func (h *Hypervisor) GetActiveNetworks()      {}
@@ -292,11 +337,10 @@ func (h *Hypervisor) GetSecrets()             {}
 func (h *Hypervisor) GetActiveStoragePools()  {}
 
 //virConnectNumOf functions
-func (h *Hypervisor) GetNumberOfDefinedDomains()      {}
+
 func (h *Hypervisor) GetNumberOfDefinedInterfaces()   {}
 func (h *Hypervisor) GetNumberOfDefinedNetworks()     {}
 func (h *Hypervisor) GetNumberOfDefinedStoragePools() {}
-func (h *Hypervisor) GetNumberOfActiveDomains()       {}
 func (h *Hypervisor) GetNumberOfActiveInterfaces()    {}
 func (h *Hypervisor) GetNumberOfActiveNetworks()      {}
 func (h *Hypervisor) GetNumberOfNetworkFilters()      {}
