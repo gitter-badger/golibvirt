@@ -16,13 +16,13 @@ type Domain struct {
 	cptr C.virDomainPtr
 }
 
-func cleanup(domain *Domain) {
+func cleanupDomain(domain *Domain) {
 	C.virDomainFree(domain.cptr)
 }
 
 func newDomain(cptr C.virDomainPtr) *Domain {
 	domain := &Domain{cptr}
-	runtime.SetFinalizer(domain, cleanup)
+	runtime.SetFinalizer(domain, cleanupDomain)
 	return domain
 }
 

@@ -318,6 +318,15 @@ func TestGetActiveDomains(t *testing.T) {
 	}
 }
 
+func TestListInterfaces(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	interfaces, _ := h.ListInterfaces(0)
+	length := len(interfaces)
+	if length != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
 func TestGetDefinedInterfaces(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
 	dnames, _ := h.GetDefinedInterfaces()
@@ -338,6 +347,15 @@ func TestGetActiveInterfaces(t *testing.T) {
 
 	if names[0] != want {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", names[0], want)
+	}
+}
+
+func TestListNetworks(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	networks, _ := h.ListNetworks(0)
+	length := len(networks)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
 	}
 }
 
@@ -477,6 +495,15 @@ func TestGetNumberOfSecrets(t *testing.T) {
 	}
 }
 
+func TestListSecrets(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	secrets, _ := h.ListSecrets(0)
+	length := len(secrets)
+	if length != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
 func TestGetNumberOfActiveStoragePools(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
 	n, _ := h.GetNumberOfActiveStoragePools()
@@ -523,6 +550,15 @@ func TestGetNodeDevicesNames(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
 	names, _ := h.GetNodeDevicesNames("", 0)
 	length := len(names)
+	if length != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestListNodeDevices(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	devices, _ := h.ListNodeDevices(0)
+	length := len(devices)
 	if length != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
 	}

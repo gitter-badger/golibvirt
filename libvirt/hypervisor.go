@@ -90,7 +90,65 @@ const (
 	VIR_CONNECT_LIST_DOMAINS_NO_SNAPSHOT    = C.VIR_CONNECT_LIST_DOMAINS_NO_SNAPSHOT
 )
 
-type UUID [16]byte
+//virConnectListAllInterfacesFlags
+const (
+	VIR_CONNECT_LIST_INTERFACES_INACTIVE = C.VIR_CONNECT_LIST_INTERFACES_INACTIVE
+	VIR_CONNECT_LIST_INTERFACES_ACTIVE   = C.VIR_CONNECT_LIST_INTERFACES_ACTIVE
+)
+
+//virConnectListAllNetworksFlags
+const (
+	VIR_CONNECT_LIST_NETWORKS_INACTIVE     = C.VIR_CONNECT_LIST_NETWORKS_INACTIVE
+	VIR_CONNECT_LIST_NETWORKS_ACTIVE       = C.VIR_CONNECT_LIST_NETWORKS_ACTIVE
+	VIR_CONNECT_LIST_NETWORKS_PERSISTENT   = C.VIR_CONNECT_LIST_NETWORKS_PERSISTENT
+	VIR_CONNECT_LIST_NETWORKS_TRANSIENT    = C.VIR_CONNECT_LIST_NETWORKS_TRANSIENT
+	VIR_CONNECT_LIST_NETWORKS_AUTOSTART    = C.VIR_CONNECT_LIST_NETWORKS_AUTOSTART
+	VIR_CONNECT_LIST_NETWORKS_NO_AUTOSTART = C.VIR_CONNECT_LIST_NETWORKS_NO_AUTOSTART
+)
+
+//virConnectListAllNodeDeviceFlags
+const (
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_SYSTEM        = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_SYSTEM        //System capability
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_PCI_DEV       = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_PCI_DEV       //PCI device
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_USB_DEV       = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_USB_DEV       //USB device
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_USB_INTERFACE = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_USB_INTERFACE //USB interface
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_NET           = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_NET           //Network device
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_HOST     = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_HOST     //SCSI Host Bus Adapter
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_TARGET   = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_TARGET   //SCSI Target
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI          = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI          //SCSI device
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_STORAGE       = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_STORAGE       //Storage device
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST       = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_FC_HOST       //FC Host Bus Adapter
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_VPORTS        = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_VPORTS        //Capable of vport
+	VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC  = C.VIR_CONNECT_LIST_NODE_DEVICES_CAP_SCSI_GENERIC  //Capable of scsi_generic
+)
+
+//virConnectListAllSecretsFlags
+const (
+	VIR_CONNECT_LIST_SECRETS_EPHEMERAL    = C.VIR_CONNECT_LIST_SECRETS_EPHEMERAL    //kept in memory, never stored persistently
+	VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL = C.VIR_CONNECT_LIST_SECRETS_NO_EPHEMERAL //Stored persistenly
+	VIR_CONNECT_LIST_SECRETS_PRIVATE      = C.VIR_CONNECT_LIST_SECRETS_PRIVATE      //not revealed to any caller of libvirt, nor to any other node
+	VIR_CONNECT_LIST_SECRETS_NO_PRIVATE   = C.VIR_CONNECT_LIST_SECRETS_NO_PRIVATE
+)
+
+//virConnectListAllStoragePoolsFlags
+const (
+	VIR_CONNECT_LIST_STORAGE_POOLS_INACTIVE     = C.VIR_CONNECT_LIST_STORAGE_POOLS_INACTIVE
+	VIR_CONNECT_LIST_STORAGE_POOLS_ACTIVE       = C.VIR_CONNECT_LIST_STORAGE_POOLS_ACTIVE
+	VIR_CONNECT_LIST_STORAGE_POOLS_PERSISTENT   = C.VIR_CONNECT_LIST_STORAGE_POOLS_PERSISTENT
+	VIR_CONNECT_LIST_STORAGE_POOLS_TRANSIENT    = C.VIR_CONNECT_LIST_STORAGE_POOLS_TRANSIENT
+	VIR_CONNECT_LIST_STORAGE_POOLS_AUTOSTART    = C.VIR_CONNECT_LIST_STORAGE_POOLS_AUTOSTART
+	VIR_CONNECT_LIST_STORAGE_POOLS_NO_AUTOSTART = C.VIR_CONNECT_LIST_STORAGE_POOLS_NO_AUTOSTART //List pools by type
+	VIR_CONNECT_LIST_STORAGE_POOLS_DIR          = C.VIR_CONNECT_LIST_STORAGE_POOLS_DIR
+	VIR_CONNECT_LIST_STORAGE_POOLS_FS           = C.VIR_CONNECT_LIST_STORAGE_POOLS_FS
+	VIR_CONNECT_LIST_STORAGE_POOLS_NETFS        = C.VIR_CONNECT_LIST_STORAGE_POOLS_NETFS
+	VIR_CONNECT_LIST_STORAGE_POOLS_LOGICAL      = C.VIR_CONNECT_LIST_STORAGE_POOLS_LOGICAL
+	VIR_CONNECT_LIST_STORAGE_POOLS_DISK         = C.VIR_CONNECT_LIST_STORAGE_POOLS_DISK
+	VIR_CONNECT_LIST_STORAGE_POOLS_ISCSI        = C.VIR_CONNECT_LIST_STORAGE_POOLS_ISCSI
+	VIR_CONNECT_LIST_STORAGE_POOLS_SCSI         = C.VIR_CONNECT_LIST_STORAGE_POOLS_SCSI
+	VIR_CONNECT_LIST_STORAGE_POOLS_MPATH        = C.VIR_CONNECT_LIST_STORAGE_POOLS_MPATH
+	VIR_CONNECT_LIST_STORAGE_POOLS_RBD          = C.VIR_CONNECT_LIST_STORAGE_POOLS_RBD
+	VIR_CONNECT_LIST_STORAGE_POOLS_SHEEPDOG     = C.VIR_CONNECT_LIST_STORAGE_POOLS_SHEEPDOG
+)
 
 type Hypervisor struct {
 	cptr C.virConnectPtr
@@ -387,6 +445,24 @@ func (h *Hypervisor) GetActiveDomains() ([]int, error) {
 	return ids, nil
 }
 
+func (h *Hypervisor) ListInterfaces(flags uint) ([]*Interface, error) {
+	var cinterfaces *C.virInterfacePtr
+	result := C.virConnectListAllInterfaces(h.cptr, &cinterfaces, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var interfaces = make([]*Interface, result)
+	p := (*[1 << 30]C.virInterfacePtr)(unsafe.Pointer(cinterfaces))
+
+	for i := 0; i < int(result); i++ {
+		interfaces[i] = newInterface(p[i])
+	}
+	defer C.free(unsafe.Pointer(cinterfaces))
+
+	return interfaces, nil
+}
+
 func (h *Hypervisor) GetDefinedInterfaces() ([]string, error) {
 	number := C.virConnectNumOfDefinedInterfaces(h.cptr)
 	if number == -1 {
@@ -437,6 +513,24 @@ func (h *Hypervisor) GetActiveInterfaces() ([]string, error) {
 	}
 
 	return names, nil
+}
+
+func (h *Hypervisor) ListNetworks(flags uint) ([]*Network, error) {
+	var cnetworks *C.virNetworkPtr
+	result := C.virConnectListAllNetworks(h.cptr, &cnetworks, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var networks = make([]*Network, result)
+	p := (*[1 << 30]C.virNetworkPtr)(unsafe.Pointer(cnetworks))
+
+	for i := 0; i < int(result); i++ {
+		networks[i] = newNetwork(p[i])
+	}
+	defer C.free(unsafe.Pointer(cnetworks))
+
+	return networks, nil
 }
 
 func (h *Hypervisor) GetDefinedNetworks() ([]string, error) {
@@ -677,6 +771,24 @@ func (h *Hypervisor) GetNumberOfSecrets() (int, error) {
 	return int(number), nil
 }
 
+func (h *Hypervisor) ListSecrets(flags uint) ([]*Secret, error) {
+	var csecrets *C.virSecretPtr
+	result := C.virConnectListAllSecrets(h.cptr, &csecrets, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var secrets = make([]*Secret, result)
+	p := (*[1 << 30]C.virSecretPtr)(unsafe.Pointer(csecrets))
+
+	for i := 0; i < int(result); i++ {
+		secrets[i] = newSecret(p[i])
+	}
+	defer C.free(unsafe.Pointer(csecrets))
+
+	return secrets, nil
+}
+
 func (h *Hypervisor) GetNumberOfActiveStoragePools() (int, error) {
 	number := C.virConnectNumOfStoragePools(h.cptr)
 	if number == -1 {
@@ -770,6 +882,24 @@ func (h *Hypervisor) GetNodeDevicesNames(capability string, flags uint) ([]strin
 	}
 
 	return names, nil
+}
+
+func (h *Hypervisor) ListNodeDevices(flags uint) ([]*NodeDevice, error) {
+	var cdevices *C.virNodeDevicePtr
+	result := C.virConnectListAllNodeDevices(h.cptr, &cdevices, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var devices = make([]*NodeDevice, result)
+	p := (*[1 << 30]C.virNodeDevicePtr)(unsafe.Pointer(cdevices))
+
+	for i := 0; i < int(result); i++ {
+		devices[i] = newNodeDevice(p[i])
+	}
+	defer C.free(unsafe.Pointer(cdevices))
+
+	return devices, nil
 }
 
 func (h *Hypervisor) GetNodeSecurityModel() (map[string]string, error) {
