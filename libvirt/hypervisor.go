@@ -739,11 +739,51 @@ func (h *Hypervisor) GetNodeInfo() (NodeInfo, error) {
 	}, nil
 }
 
-func (h *Hypervisor) GetNodeDevicesNames() {
+func (h *Hypervisor) GetNodeDevicesNames(capability string, flags uint) ([]string, error) {
+	var cCapability *C.char
 
+	if capability == "" {
+		cCapability = C.CString(capability)
+		defer C.free(unsafe.Pointer(cCapability))
+	}
+
+	number := C.virNodeNumOfDevices(h.cptr, cCapability, 0)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virNodeListDevices(h.cptr, cCapability, &cnames[0], number, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
 }
 
-func (h *Hypervisor) GetNodeSecurityModel() {}
+func (h *Hypervisor) GetNodeSecurityModel() (map[string]string, error) {
+	var cSecurityModel C.virSecurityModel
+	result := C.virNodeGetSecurityModel(h.cptr, &cSecurityModel)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	return map[string]string{
+		"model": C.GoString(&cSecurityModel.model[0]),
+		"doi":   C.GoString(&cSecurityModel.doi[0]),
+	}, nil
+}
 
 //Event functions
 func (h *Hypervisor) RegisterDomainEvent()   {}

@@ -1,7 +1,6 @@
 package libvirt
 
 import (
-	// "fmt"
 	"os"
 	"reflect"
 	"testing"
@@ -517,5 +516,32 @@ func TestGetNodeInfo(t *testing.T) {
 
 	if !reflect.DeepEqual(nodeInfo, want) {
 		t.Errorf("Incorrect result\ngot:  %#v\nwant: %#v", nodeInfo, want)
+	}
+}
+
+func TestGetNodeDevicesNames(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	names, _ := h.GetNodeDevicesNames("", 0)
+	length := len(names)
+	if length != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetNodeSecurityModel(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	secModel, err := h.GetNodeSecurityModel()
+
+	want := "this function is not supported by the connection driver: virNodeGetSecurityModel"
+	if err.Error() != want {
+		t.Errorf("incorrect result\ngot:  %s\nwant: %s", err, want)
+	}
+
+	if secModel["model"] != "" {
+		t.Errorf("Incorrect result\ngot:  %#v\nwant: %#v", secModel["model"], nil)
+	}
+
+	if secModel["doi"] != "" {
+		t.Errorf("Incorrect result\ngot:  %#v\nwant: %#v", secModel["doi"], nil)
 	}
 }
