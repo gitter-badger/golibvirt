@@ -23,6 +23,7 @@ import (
 	//"bytes"
 	//"encoding/binary"
 	// "fmt"
+	"errors"
 	"unsafe"
 )
 
@@ -93,6 +94,17 @@ type UUID [16]byte
 
 type Hypervisor struct {
 	cptr C.virConnectPtr
+}
+
+type NodeInfo struct {
+	Model   string //string indicating the CPU model
+	Memory  uint64 //memory size in kilobytes
+	Cpus    uint   //the number of active CPUs
+	Mhz     uint   //expected CPU frequency
+	Nodes   uint   //the number of NUMA cell, 1 for unusual NUMA topologies or uniform memory access; check capabilities XML for the actual NUMA topology
+	Sockets uint   //number of CPU sockets per node if nodes > 1, 1 in case of unusual NUMA topology
+	Cores   uint   //number of cores per socket, total number of processors in case of unusual NUMA topology
+	Threads uint   //number of threads per core, 1 in case of unusual numa topology
 }
 
 func NewHypervisor(uri string) (*Hypervisor, error) {
@@ -675,11 +687,63 @@ func (h *Hypervisor) GetNumberOfActiveStoragePools() (int, error) {
 }
 
 //Node functions
-func (h *Hypervisor) GetNodeFreeMemoryInNumaCells() {}
-func (h *Hypervisor) GetNodeFreeMemory()            {}
-func (h *Hypervisor) GetNodeInfo()                  {}
-func (h *Hypervisor) GetNodeDevicesNames()          {}
-func (h *Hypervisor) GetNodeSecurityModel()         {}
+func (h *Hypervisor) GetNodeFreeMemoryInNumaCells(startCell int, maxCells int) ([]uint64, error) {
+	if startCell < 0 || maxCells <= 0 || (startCell+maxCells) > 10000 {
+		return nil, errors.New("GetNodeFreeMemoryInNumaCells: Inconsistent cell bounds")
+	}
+
+	freeMemory := make([]C.ulonglong, maxCells)
+
+	result := C.virNodeGetCellsFreeMemory(h.cptr, &freeMemory[0], C.int(startCell), C.int(maxCells))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	cells := make([]uint64, result)
+	if result == 0 {
+		return cells, nil
+	}
+
+	for i := 0; i < int(result); i++ {
+		cells[i] = uint64(freeMemory[i])
+	}
+
+	return cells, nil
+}
+
+func (h *Hypervisor) GetNodeFreeMemory() (uint64, error) {
+	result := C.virNodeGetFreeMemory(h.cptr)
+	if result == 0 {
+		return 0, GetLastError()
+	}
+
+	return uint64(result), nil
+}
+
+func (h *Hypervisor) GetNodeInfo() (NodeInfo, error) {
+	var cNodeInfo C.virNodeInfo
+	result := C.virNodeGetInfo(h.cptr, &cNodeInfo)
+	if result == -1 {
+		return NodeInfo{}, GetLastError()
+	}
+
+	return NodeInfo{
+		Model:   C.GoString(&cNodeInfo.model[0]),
+		Memory:  uint64(cNodeInfo.memory),
+		Cpus:    uint(cNodeInfo.cpus),
+		Mhz:     uint(cNodeInfo.mhz),
+		Nodes:   uint(cNodeInfo.nodes),
+		Sockets: uint(cNodeInfo.sockets),
+		Cores:   uint(cNodeInfo.cores),
+		Threads: uint(cNodeInfo.threads),
+	}, nil
+}
+
+func (h *Hypervisor) GetNodeDevicesNames() {
+
+}
+
+func (h *Hypervisor) GetNodeSecurityModel() {}
 
 //Event functions
 func (h *Hypervisor) RegisterDomainEvent()   {}

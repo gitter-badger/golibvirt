@@ -1,7 +1,9 @@
 package libvirt
 
 import (
+	// "fmt"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -481,5 +483,39 @@ func TestGetNumberOfActiveStoragePools(t *testing.T) {
 	n, _ := h.GetNumberOfActiveStoragePools()
 	if n != 1 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}
+
+func TestGetNodeFreeMemoryInNumaCells(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	cells, _ := h.GetNodeFreeMemoryInNumaCells(0, 30)
+	length := len(cells)
+	if length != 2 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 2)
+	}
+
+	cells, err := h.GetNodeFreeMemoryInNumaCells(0, 0)
+	want := "GetNodeFreeMemoryInNumaCells: Inconsistent cell bounds"
+	if err.Error() != want {
+		t.Errorf("incorrect result\ngot:  %s\nwant: %s", err, want)
+	}
+}
+
+func TestGetNodeFreeMemory(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	memory, _ := h.GetNodeFreeMemory()
+	if memory != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", memory, 0)
+	}
+}
+
+func TestGetNodeInfo(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	nodeInfo, _ := h.GetNodeInfo()
+
+	want := NodeInfo{"i686", 3145728, 16, 1400, 2, 2, 2, 2}
+
+	if !reflect.DeepEqual(nodeInfo, want) {
+		t.Errorf("Incorrect result\ngot:  %#v\nwant: %#v", nodeInfo, want)
 	}
 }
