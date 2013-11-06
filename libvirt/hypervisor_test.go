@@ -294,3 +294,192 @@ func TestListDomains(t *testing.T) {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
 	}
 }
+
+func TestGetDefinedDomains(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	dnames, _ := h.GetDefinedDomains()
+	length := len(dnames)
+	if length > 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetActiveDomains(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	ids, _ := h.GetActiveDomains()
+	length := len(ids)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
+	}
+
+	if ids[0] != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", ids[0], 1)
+	}
+}
+
+func TestGetDefinedInterfaces(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	dnames, _ := h.GetDefinedInterfaces()
+	length := len(dnames)
+	if length > 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetActiveInterfaces(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	names, _ := h.GetActiveInterfaces()
+	length := len(names)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
+	}
+	want := "eth1"
+
+	if names[0] != want {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", names[0], want)
+	}
+}
+
+func TestGetDefinedNetworks(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	dnames, _ := h.GetDefinedNetworks()
+	length := len(dnames)
+	if length > 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetActiveNetworks(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	names, _ := h.GetActiveNetworks()
+	length := len(names)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
+	}
+	want := "default"
+
+	if names[0] != want {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", names[0], want)
+	}
+}
+
+func TestGetNetworkFilters(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	names, _ := h.GetNetworkFilters()
+	length := len(names)
+	if length > 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetSecrets(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	secrets, _ := h.GetSecrets()
+	length := len(secrets)
+	if length > 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetDefinedStoragePools(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	names, _ := h.GetDefinedStoragePools()
+	length := len(names)
+	if length > 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
+func TestGetActivateStoragePools(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	names, _ := h.GetActiveStoragePools()
+	length := len(names)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
+	}
+	want := "default-pool"
+
+	if names[0] != want {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", names[0], want)
+	}
+}
+
+func TestGetNumberOfDefinedDomains(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfDefinedDomains()
+	if n != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
+	}
+}
+
+func TestGetNumberOfActiveDomains(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfActiveDomains()
+	if n != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}
+
+func TestGetNumberOfDefinedInterfaces(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfDefinedInterfaces()
+	if n != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
+	}
+}
+
+func TestGetNumberOfDefinedNetworks(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfDefinedNetworks()
+	if n != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
+	}
+}
+
+func TestGetNumberOfDefinedStoragePools(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfDefinedStoragePools()
+	if n != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
+	}
+}
+
+func TestGetNumberOfActiveInterfaces(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfActiveInterfaces()
+	if n != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}
+
+func TestGetNumberOfActiveNetworks(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfActiveNetworks()
+	if n != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}
+
+func TestGetNumberOfNetworkFilters(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfNetworkFilters()
+	if n != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}
+
+func TestGetNumberOfSecrets(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfSecrets()
+	if n != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}
+
+func TestGetNumberOfActiveStoragePools(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	n, _ := h.GetNumberOfActiveStoragePools()
+	if n != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
+	}
+}

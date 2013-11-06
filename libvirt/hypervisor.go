@@ -22,7 +22,7 @@ import "C"
 import (
 	//"bytes"
 	//"encoding/binary"
-	//"fmt"
+	// "fmt"
 	"unsafe"
 )
 
@@ -88,6 +88,8 @@ const (
 	VIR_CONNECT_LIST_DOMAINS_HAS_SNAPSHOT   = C.VIR_CONNECT_LIST_DOMAINS_HAS_SNAPSHOT
 	VIR_CONNECT_LIST_DOMAINS_NO_SNAPSHOT    = C.VIR_CONNECT_LIST_DOMAINS_NO_SNAPSHOT
 )
+
+type UUID [16]byte
 
 type Hypervisor struct {
 	cptr C.virConnectPtr
@@ -322,30 +324,355 @@ func (h *Hypervisor) ListDomains(flags uint) ([]*Domain, error) {
 	return domains, nil
 }
 
-//func (h *Hypervisor) GetDefinedDomains()      {}
-//func (h *Hypervisor) GetActiveDomains()       {}
-//func (h *Hypervisor) GetNumberOfDefinedDomains() {}
-//func (h *Hypervisor) GetNumberOfActiveDomains() {}
+func (h *Hypervisor) GetDefinedDomains() ([]string, error) {
+	number := C.virConnectNumOfDefinedDomains(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
 
-func (h *Hypervisor) GetDefinedInterfaces()   {}
-func (h *Hypervisor) GetDefinedNetworks()     {}
-func (h *Hypervisor) GetDefinedStoragePools() {}
-func (h *Hypervisor) GetActiveInterfaces()    {}
-func (h *Hypervisor) GetNetworkFilters()      {}
-func (h *Hypervisor) GetActiveNetworks()      {}
-func (h *Hypervisor) GetSecrets()             {}
-func (h *Hypervisor) GetActiveStoragePools()  {}
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListDefinedDomains(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetActiveDomains() ([]int, error) {
+	number := C.virConnectNumOfDomains(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	ids := make([]int, number)
+
+	if number == 0 {
+		return ids, nil
+	}
+
+	cids := make([]C.int, number)
+	result := C.virConnectListDomains(h.cptr, &cids[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cids {
+		ids[i] = int(v)
+	}
+
+	return ids, nil
+}
+
+func (h *Hypervisor) GetDefinedInterfaces() ([]string, error) {
+	number := C.virConnectNumOfDefinedInterfaces(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListDefinedInterfaces(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetActiveInterfaces() ([]string, error) {
+	number := C.virConnectNumOfInterfaces(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListInterfaces(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetDefinedNetworks() ([]string, error) {
+	number := C.virConnectNumOfDefinedNetworks(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListDefinedNetworks(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetActiveNetworks() ([]string, error) {
+	number := C.virConnectNumOfNetworks(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListNetworks(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetNetworkFilters() ([]string, error) {
+	number := C.virConnectNumOfNWFilters(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListNWFilters(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetSecrets() ([][]byte, error) {
+	number := C.virConnectNumOfSecrets(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	uuids := make([][]byte, number)
+
+	if number == 0 {
+		return uuids, nil
+	}
+
+	cuuids := make([]*C.char, number)
+	result := C.virConnectListSecrets(h.cptr, &cuuids[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cuuids {
+		uuids[i] = C.GoBytes(unsafe.Pointer(v), 16)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return uuids, nil
+}
+
+func (h *Hypervisor) GetDefinedStoragePools() ([]string, error) {
+	number := C.virConnectNumOfDefinedStoragePools(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListDefinedStoragePools(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
+
+func (h *Hypervisor) GetActiveStoragePools() ([]string, error) {
+	number := C.virConnectNumOfStoragePools(h.cptr)
+	if number == -1 {
+		return nil, GetLastError()
+	}
+
+	names := make([]string, number)
+
+	if number == 0 {
+		return names, nil
+	}
+
+	cnames := make([]*C.char, number)
+	result := C.virConnectListStoragePools(h.cptr, &cnames[0], number)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	for i, v := range cnames {
+		names[i] = C.GoString(v)
+		defer C.free(unsafe.Pointer(v))
+	}
+
+	return names, nil
+}
 
 //virConnectNumOf functions
+func (h *Hypervisor) GetNumberOfDefinedDomains() (int, error) {
+	number := C.virConnectNumOfDefinedDomains(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
 
-func (h *Hypervisor) GetNumberOfDefinedInterfaces()   {}
-func (h *Hypervisor) GetNumberOfDefinedNetworks()     {}
-func (h *Hypervisor) GetNumberOfDefinedStoragePools() {}
-func (h *Hypervisor) GetNumberOfActiveInterfaces()    {}
-func (h *Hypervisor) GetNumberOfActiveNetworks()      {}
-func (h *Hypervisor) GetNumberOfNetworkFilters()      {}
-func (h *Hypervisor) GetNumberOfSecrets()             {}
-func (h *Hypervisor) GetNumberOfActiveStoragePools()  {}
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfActiveDomains() (int, error) {
+	number := C.virConnectNumOfDomains(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfDefinedInterfaces() (int, error) {
+	number := C.virConnectNumOfDefinedInterfaces(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfDefinedNetworks() (int, error) {
+	number := C.virConnectNumOfDefinedNetworks(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfDefinedStoragePools() (int, error) {
+	number := C.virConnectNumOfDefinedStoragePools(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfActiveInterfaces() (int, error) {
+	number := C.virConnectNumOfInterfaces(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfActiveNetworks() (int, error) {
+	number := C.virConnectNumOfNetworks(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfNetworkFilters() (int, error) {
+	number := C.virConnectNumOfNWFilters(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfSecrets() (int, error) {
+	number := C.virConnectNumOfSecrets(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
+
+func (h *Hypervisor) GetNumberOfActiveStoragePools() (int, error) {
+	number := C.virConnectNumOfStoragePools(h.cptr)
+	if number == -1 {
+		return 0, GetLastError()
+	}
+
+	return int(number), nil
+}
 
 //Node functions
 func (h *Hypervisor) GetNodeFreeMemoryInNumaCells() {}
