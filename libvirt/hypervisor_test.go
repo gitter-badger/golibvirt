@@ -391,6 +391,15 @@ func TestGetNetworkFilters(t *testing.T) {
 	}
 }
 
+func TestListNetworkFilters(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	filters, _ := h.ListNetworkFilters(0)
+	length := len(filters)
+	if length != 0 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 0)
+	}
+}
+
 func TestGetSecrets(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
 	secrets, _ := h.GetSecrets()
@@ -420,6 +429,15 @@ func TestGetActivateStoragePools(t *testing.T) {
 
 	if names[0] != want {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", names[0], want)
+	}
+}
+
+func TestListStoragePools(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	pools, _ := h.ListStoragePools(0)
+	length := len(pools)
+	if length != 1 {
+		t.Errorf("incorrect result\ngot:  %d\nwant: %d", length, 1)
 	}
 }
 

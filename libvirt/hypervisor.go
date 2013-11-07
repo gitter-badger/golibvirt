@@ -611,6 +611,24 @@ func (h *Hypervisor) GetNetworkFilters() ([]string, error) {
 	return names, nil
 }
 
+func (h *Hypervisor) ListNetworkFilters(flags uint) ([]*NetworkFilter, error) {
+	var cfilters *C.virNWFilterPtr
+	result := C.virConnectListAllNWFilters(h.cptr, &cfilters, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var filters = make([]*NetworkFilter, result)
+	p := (*[1 << 30]C.virNWFilterPtr)(unsafe.Pointer(cfilters))
+
+	for i := 0; i < int(result); i++ {
+		filters[i] = newNetworkFilter(p[i])
+	}
+	defer C.free(unsafe.Pointer(cfilters))
+
+	return filters, nil
+}
+
 func (h *Hypervisor) GetSecrets() ([][]byte, error) {
 	number := C.virConnectNumOfSecrets(h.cptr)
 	if number == -1 {
@@ -687,6 +705,24 @@ func (h *Hypervisor) GetActiveStoragePools() ([]string, error) {
 	}
 
 	return names, nil
+}
+
+func (h *Hypervisor) ListStoragePools(flags uint) ([]*StoragePool, error) {
+	var cpools *C.virStoragePoolPtr
+	result := C.virConnectListAllStoragePools(h.cptr, &cpools, C.uint(flags))
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	var pools = make([]*StoragePool, result)
+	p := (*[1 << 30]C.virStoragePoolPtr)(unsafe.Pointer(cpools))
+
+	for i := 0; i < int(result); i++ {
+		pools[i] = newStoragePool(p[i])
+	}
+	defer C.free(unsafe.Pointer(cpools))
+
+	return pools, nil
 }
 
 //virConnectNumOf functions
