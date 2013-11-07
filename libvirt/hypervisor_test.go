@@ -7,7 +7,8 @@ import (
 )
 
 func TestNewHypervisor(t *testing.T) {
-	_, err := NewHypervisor("test:///default")
+	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 	if err != nil {
 		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
 	}
@@ -15,6 +16,7 @@ func TestNewHypervisor(t *testing.T) {
 
 func TestCloseConnection(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 	if err != nil {
 		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
 	}
@@ -116,6 +118,7 @@ func TestCloseConnection(t *testing.T) {
 //present in the local libvirt installation
 func TestCompareCPU(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 	result, err := h.CompareCPU(`<cpu match='exact'>
 	<model>qemu32</model>
 	<feature policy='require' name='xtpr'/>
@@ -149,6 +152,7 @@ func TestCompareCPU(t *testing.T) {
 
 func TestGetCapabilities(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 
 	_, err = h.GetCapabilities()
 	if err != nil {
@@ -159,6 +163,7 @@ func TestGetCapabilities(t *testing.T) {
 
 func TestGetHostname(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 
 	hostname, err := h.GetHostname()
 	if err != nil {
@@ -175,6 +180,7 @@ func TestGetHostname(t *testing.T) {
 
 func TestGetSysInfo(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 
 	_, err = h.GetSysInfo(0)
 
@@ -188,6 +194,7 @@ func TestGetSysInfo(t *testing.T) {
 
 func TestGetType(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 	htype, err := h.GetType()
 	want := "Test"
 	if htype != want {
@@ -201,6 +208,7 @@ func TestGetType(t *testing.T) {
 
 func TestGetConnectionUri(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
 	uri, err := h.GetConnectionUri()
 
 	if err != nil {
@@ -215,6 +223,8 @@ func TestGetConnectionUri(t *testing.T) {
 
 func TestGetVersion(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	version, err := h.GetVersion()
 
 	if err != nil {
@@ -228,6 +238,8 @@ func TestGetVersion(t *testing.T) {
 
 func TestGetLibVirtVersion(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	_, err = h.GetLibVirtVersion()
 
 	if err != nil {
@@ -237,6 +249,8 @@ func TestGetLibVirtVersion(t *testing.T) {
 
 func TestGetMaxVcpus(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	vcpus, err := h.GetMaxVcpus("")
 
 	if err != nil {
@@ -250,6 +264,8 @@ func TestGetMaxVcpus(t *testing.T) {
 
 func TestIsConnectionEncrypted(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	encrypted, err := h.IsConnectionEncrypted()
 
 	if err != nil {
@@ -263,6 +279,8 @@ func TestIsConnectionEncrypted(t *testing.T) {
 
 func TestIsConnectionSecure(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	secure, err := h.IsConnectionSecure()
 
 	if err != nil {
@@ -276,6 +294,8 @@ func TestIsConnectionSecure(t *testing.T) {
 
 func TestIsConnectionAlive(t *testing.T) {
 	h, err := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	alive, err := h.IsConnectionAlive()
 
 	if err != nil {
@@ -289,6 +309,8 @@ func TestIsConnectionAlive(t *testing.T) {
 
 func TestListDomains(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	domains, _ := h.ListDomains(0)
 	length := len(domains)
 	if length != 1 {
@@ -298,6 +320,8 @@ func TestListDomains(t *testing.T) {
 
 func TestGetDefinedDomains(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	dnames, _ := h.GetDefinedDomains()
 	length := len(dnames)
 	if length > 0 {
@@ -307,6 +331,8 @@ func TestGetDefinedDomains(t *testing.T) {
 
 func TestGetActiveDomains(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	ids, _ := h.GetActiveDomains()
 	length := len(ids)
 	if length != 1 {
@@ -320,6 +346,8 @@ func TestGetActiveDomains(t *testing.T) {
 
 func TestListInterfaces(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	interfaces, _ := h.ListInterfaces(0)
 	length := len(interfaces)
 	if length != 0 {
@@ -329,6 +357,8 @@ func TestListInterfaces(t *testing.T) {
 
 func TestGetDefinedInterfaces(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	dnames, _ := h.GetDefinedInterfaces()
 	length := len(dnames)
 	if length > 0 {
@@ -338,6 +368,8 @@ func TestGetDefinedInterfaces(t *testing.T) {
 
 func TestGetActiveInterfaces(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	names, _ := h.GetActiveInterfaces()
 	length := len(names)
 	if length != 1 {
@@ -352,6 +384,8 @@ func TestGetActiveInterfaces(t *testing.T) {
 
 func TestListNetworks(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	networks, _ := h.ListNetworks(0)
 	length := len(networks)
 	if length != 1 {
@@ -361,6 +395,8 @@ func TestListNetworks(t *testing.T) {
 
 func TestGetDefinedNetworks(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	dnames, _ := h.GetDefinedNetworks()
 	length := len(dnames)
 	if length > 0 {
@@ -370,6 +406,8 @@ func TestGetDefinedNetworks(t *testing.T) {
 
 func TestGetActiveNetworks(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	names, _ := h.GetActiveNetworks()
 	length := len(names)
 	if length != 1 {
@@ -384,6 +422,8 @@ func TestGetActiveNetworks(t *testing.T) {
 
 func TestGetNetworkFilters(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	names, _ := h.GetNetworkFilters()
 	length := len(names)
 	if length > 0 {
@@ -393,6 +433,8 @@ func TestGetNetworkFilters(t *testing.T) {
 
 func TestListNetworkFilters(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	filters, _ := h.ListNetworkFilters(0)
 	length := len(filters)
 	if length != 0 {
@@ -402,6 +444,8 @@ func TestListNetworkFilters(t *testing.T) {
 
 func TestGetSecrets(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	secrets, _ := h.GetSecrets()
 	length := len(secrets)
 	if length > 0 {
@@ -411,6 +455,8 @@ func TestGetSecrets(t *testing.T) {
 
 func TestGetDefinedStoragePools(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	names, _ := h.GetDefinedStoragePools()
 	length := len(names)
 	if length > 0 {
@@ -420,6 +466,8 @@ func TestGetDefinedStoragePools(t *testing.T) {
 
 func TestGetActivateStoragePools(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	names, _ := h.GetActiveStoragePools()
 	length := len(names)
 	if length != 1 {
@@ -434,6 +482,8 @@ func TestGetActivateStoragePools(t *testing.T) {
 
 func TestListStoragePools(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	pools, _ := h.ListStoragePools(0)
 	length := len(pools)
 	if length != 1 {
@@ -443,6 +493,8 @@ func TestListStoragePools(t *testing.T) {
 
 func TestGetNumberOfDefinedDomains(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfDefinedDomains()
 	if n != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
@@ -451,6 +503,8 @@ func TestGetNumberOfDefinedDomains(t *testing.T) {
 
 func TestGetNumberOfActiveDomains(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfActiveDomains()
 	if n != 1 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
@@ -459,6 +513,8 @@ func TestGetNumberOfActiveDomains(t *testing.T) {
 
 func TestGetNumberOfDefinedInterfaces(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfDefinedInterfaces()
 	if n != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
@@ -467,6 +523,8 @@ func TestGetNumberOfDefinedInterfaces(t *testing.T) {
 
 func TestGetNumberOfDefinedNetworks(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfDefinedNetworks()
 	if n != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
@@ -475,6 +533,8 @@ func TestGetNumberOfDefinedNetworks(t *testing.T) {
 
 func TestGetNumberOfDefinedStoragePools(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfDefinedStoragePools()
 	if n != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 0)
@@ -483,6 +543,8 @@ func TestGetNumberOfDefinedStoragePools(t *testing.T) {
 
 func TestGetNumberOfActiveInterfaces(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfActiveInterfaces()
 	if n != 1 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
@@ -491,6 +553,8 @@ func TestGetNumberOfActiveInterfaces(t *testing.T) {
 
 func TestGetNumberOfActiveNetworks(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfActiveNetworks()
 	if n != 1 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
@@ -499,6 +563,8 @@ func TestGetNumberOfActiveNetworks(t *testing.T) {
 
 func TestGetNumberOfNetworkFilters(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfNetworkFilters()
 	if n != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
@@ -507,6 +573,8 @@ func TestGetNumberOfNetworkFilters(t *testing.T) {
 
 func TestGetNumberOfSecrets(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfSecrets()
 	if n != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
@@ -515,6 +583,8 @@ func TestGetNumberOfSecrets(t *testing.T) {
 
 func TestListSecrets(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	secrets, _ := h.ListSecrets(0)
 	length := len(secrets)
 	if length != 0 {
@@ -524,6 +594,8 @@ func TestListSecrets(t *testing.T) {
 
 func TestGetNumberOfActiveStoragePools(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	n, _ := h.GetNumberOfActiveStoragePools()
 	if n != 1 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", n, 1)
@@ -532,6 +604,8 @@ func TestGetNumberOfActiveStoragePools(t *testing.T) {
 
 func TestGetNodeFreeMemoryInNumaCells(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	cells, _ := h.GetNodeFreeMemoryInNumaCells(0, 30)
 	length := len(cells)
 	if length != 2 {
@@ -547,6 +621,8 @@ func TestGetNodeFreeMemoryInNumaCells(t *testing.T) {
 
 func TestGetNodeFreeMemory(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	memory, _ := h.GetNodeFreeMemory()
 	if memory != 0 {
 		t.Errorf("incorrect result\ngot:  %d\nwant: %d", memory, 0)
@@ -555,6 +631,8 @@ func TestGetNodeFreeMemory(t *testing.T) {
 
 func TestGetNodeInfo(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	nodeInfo, _ := h.GetNodeInfo()
 
 	want := NodeInfo{"i686", 3145728, 16, 1400, 2, 2, 2, 2}
@@ -566,6 +644,8 @@ func TestGetNodeInfo(t *testing.T) {
 
 func TestGetNodeDevicesNames(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	names, _ := h.GetNodeDevicesNames("", 0)
 	length := len(names)
 	if length != 0 {
@@ -575,6 +655,8 @@ func TestGetNodeDevicesNames(t *testing.T) {
 
 func TestListNodeDevices(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	devices, _ := h.ListNodeDevices(0)
 	length := len(devices)
 	if length != 0 {
@@ -584,6 +666,8 @@ func TestListNodeDevices(t *testing.T) {
 
 func TestGetNodeSecurityModel(t *testing.T) {
 	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
 	secModel, err := h.GetNodeSecurityModel()
 
 	want := "this function is not supported by the connection driver: virNodeGetSecurityModel"

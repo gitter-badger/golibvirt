@@ -387,7 +387,7 @@ func (h *Hypervisor) ListDomains(flags uint) ([]*Domain, error) {
 	p := (*[1 << 30]C.virDomainPtr)(unsafe.Pointer(cdomains))
 
 	for i := 0; i < int(result); i++ {
-		domains[i] = newDomain(p[i])
+		domains[i] = newDomain(p[i], h.cptr)
 	}
 	defer C.free(unsafe.Pointer(cdomains))
 
@@ -957,3 +957,64 @@ func (h *Hypervisor) UnregisterDomainEvent() {}
 
 //Misc functions
 func (h *Hypervisor) FindStoragePoolSources() {}
+
+/**
+ * Some functions that make more sense
+ * being executed from the Hypervisor perspective
+ * and using factory pattern
+ */
+
+//Domain
+func (h *Hypervisor) CreateDomain(xml string, flags uint) (*Domain, error) {
+	return createDomain(h.cptr, xml, flags)
+}
+
+func (h *Hypervisor) DefineDomain() (*Domain, error) {
+	//return defineDomain(h.cptr)
+	return nil, nil
+}
+
+func (h *Hypervisor) RestoreDomain(fromFile string) error {
+	//return restoreDomain(h.cptr, fromFile)
+	return nil
+}
+
+func (h *Hypervisor) LookupDomainById()   {}
+func (h *Hypervisor) LookupDomainByName() {}
+func (h *Hypervisor) LookupDomainByUUID() {}
+
+//NodeDevice
+func (h *Hypervisor) CreateNodeDevice()       {}
+func (h *Hypervisor) LookupNodeDeviceByName() {}
+
+//Network
+func (h *Hypervisor) CreateNetwork()       {}
+func (h *Hypervisor) DefineNetwork()       {}
+func (h *Hypervisor) LookupNetworkByName() {}
+func (h *Hypervisor) LookupNetworkByUUID() {}
+
+//NetworkFilter
+func (h *Hypervisor) DefineNetworkFilter()       {}
+func (h *Hypervisor) LookupNetworkFilterByName() {}
+func (h *Hypervisor) LookupNetworkFilterByUUID() {}
+
+//Interface
+func (h *Hypervisor) DefineInterface()             {}
+func (h *Hypervisor) LookupInterfaceByName()       {}
+func (h *Hypervisor) LookupInterfaceByMacAddress() {}
+
+//Secret
+func (h *Hypervisor) DefineSecret()        {}
+func (h *Hypervisor) LookupSecretByUsage() {}
+func (h *Hypervisor) LookupSecretByUUID()  {}
+
+//StoragePool
+func (h *Hypervisor) CreateStoragePool()         {}
+func (h *Hypervisor) DefineStoragePool()         {}
+func (h *Hypervisor) LookupStoragePoolByName()   {}
+func (h *Hypervisor) LookupStoragePoolByUUID()   {}
+func (h *Hypervisor) LookupStoragePoolByVolume() {}
+
+//StorageVolume
+func (h *Hypervisor) LookupStorageVolumeByKey()  {}
+func (h *Hypervisor) LookupStorageVolumeByPath() {}

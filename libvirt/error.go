@@ -9,7 +9,7 @@ package libvirt
 static void customErrorFunc(void *userdata, virErrorPtr err) {
 	//This empty custom error handler function
 	//avoids libvirt printing
-	//errors in stderr and leaves Go take over seamlessly
+	//errors in stderr and lets Go take over seamlessly
 }
 
 static void setCustomErrorHandler() {
