@@ -974,8 +974,7 @@ func (h *Hypervisor) DefineDomain(xml string) (*Domain, error) {
 }
 
 func (h *Hypervisor) RestoreDomain(fromFile string) error {
-	//return restoreDomain(h.cptr, fromFile)
-	return nil
+	return restoreDomain(h.cptr, fromFile)
 }
 
 func (h *Hypervisor) LookupDomainById()   {}

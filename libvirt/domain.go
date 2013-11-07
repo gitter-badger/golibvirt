@@ -67,6 +67,18 @@ func defineDomain(conn C.virConnectPtr, xml string) (*Domain, error) {
 	return domain, nil
 }
 
+func restoreDomain(conn C.virConnectPtr, filepath string) error {
+	cfilepath := C.CString(filepath)
+	defer C.free(unsafe.Pointer(cfilepath))
+
+	result := C.virDomainRestore(conn, cfilepath)
+	if result == -1 {
+		return GetLastError()
+	}
+
+	return nil
+}
+
 func (d *Domain) GetName() (string, error) {
 	result := C.virDomainGetName(d.cptr)
 	if result == nil {
@@ -76,3 +88,63 @@ func (d *Domain) GetName() (string, error) {
 	name := C.GoString(result)
 	return name, nil
 }
+
+func (d *Domain) lookupById()              {}
+func (d *Domain) lookupByName()            {}
+func (d *Domain) lookupByUUID()            {}
+func (d *Domain) Undefine()                {}
+func (d *Domain) GetId()                   {}
+func (d *Domain) GetInfo()                 {}
+func (d *Domain) GetUUID()                 {}
+func (d *Domain) GetAutostart()            {}
+func (d *Domain) SetAutostart()            {}
+func (d *Domain) GetOsType()               {}
+func (d *Domain) GetMaxMemory()            {}
+func (d *Domain) SetMaxMemory()            {}
+func (d *Domain) SetMemory()               {}
+func (d *Domain) GetMaxVcpus()             {}
+func (d *Domain) IsActive()                {}
+func (d *Domain) IsPersistent()            {}
+func (d *Domain) IsUpdated()               {}
+func (d *Domain) Reboot()                  {}
+func (d *Domain) Reset()                   {}
+func (d *Domain) Save()                    {}
+func (d *Domain) Restore()                 {}
+func (d *Domain) Suspend()                 {}
+func (d *Domain) Resume()                  {}
+func (d *Domain) Shutdown()                {}
+func (d *Domain) Start()                   {}
+func (d *Domain) Destroy()                 {}
+func (d *Domain) SendKey()                 {}
+func (d *Domain) GetVcpus()                {}
+func (d *Domain) SetVcpus()                {}
+func (d *Domain) Migrate()                 {}
+func (d *Domain) SetMigrationMaxDowntime() {}
+func (d *Domain) PinVcpu()                 {}
+func (d *Domain) AttachDevice()            {}
+func (d *Domain) DetachDevice()            {}
+func (d *Domain) UpdateDevice()            {}
+func (d *Domain) ToXml()                   {}
+func (d *Domain) GetJobInfo()              {}
+func (d *Domain) AbortCurrentJob()         {}
+func (d *Domain) GetSchedType()            {}
+func (d *Domain) GetSchedParams()          {}
+func (d *Domain) SetSchedParams()          {}
+func (d *Domain) GetSecurityLabel()        {}
+func (d *Domain) SaveManagedImage()        {}
+func (d *Domain) RemoveManagedImage()      {}
+func (d *Domain) HasManagedImage()         {}
+func (d *Domain) MemoryPeek()              {}
+func (d *Domain) GetMemoryStats()          {}
+func (d *Domain) BlockPeek()               {}
+func (d *Domain) GetBlockStats()           {}
+func (d *Domain) GetBlockInfo()            {}
+func (d *Domain) CoreDump()                {}
+func (d *Domain) GetInterfaceStats()       {}
+func (d *Domain) HasCurrentSnapshot()      {}
+func (d *Domain) RevertToSnapshot()        {}
+func (d *Domain) TakeSnapshot()            {}
+func (d *Domain) GetCurrentSnapshot()      {}
+func (d *Domain) DeleteSnapshot()          {}
+func (d *Domain) LookupSnapshotByName()    {}
+func (d *Domain) GetSnapshots()            {}

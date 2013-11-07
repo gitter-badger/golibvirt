@@ -73,6 +73,16 @@ func TestDefineDomain(t *testing.T) {
 	}
 }
 
+// func TestRestoreDomain(t *testing.T) {
+// 	h, _ := NewHypervisor("test:///default")
+// 	defer h.CloseConnection()
+
+// 	err := h.RestoreDomain("/tmp/test.xml")
+// 	if err != nil {
+// 		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
+// 	}
+// }
+
 // func TestGetName(t *testing.T) {
 // 	h, _ := NewHypervisor("test:///default")
 // 	defer h.CloseConnection()
