@@ -969,9 +969,8 @@ func (h *Hypervisor) CreateDomain(xml string, flags uint) (*Domain, error) {
 	return createDomain(h.cptr, xml, flags)
 }
 
-func (h *Hypervisor) DefineDomain() (*Domain, error) {
-	//return defineDomain(h.cptr)
-	return nil, nil
+func (h *Hypervisor) DefineDomain(xml string) (*Domain, error) {
+	return defineDomain(h.cptr, xml)
 }
 
 func (h *Hypervisor) RestoreDomain(fromFile string) error {

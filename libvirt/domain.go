@@ -52,6 +52,21 @@ func createDomain(conn C.virConnectPtr, xml string, flags uint) (*Domain, error)
 	return domain, nil
 }
 
+func defineDomain(conn C.virConnectPtr, xml string) (*Domain, error) {
+	cxml := C.CString(xml)
+	defer C.free(unsafe.Pointer(cxml))
+
+	cdomain := C.virDomainDefineXML(conn, cxml)
+	if cdomain == nil {
+		return nil, GetLastError()
+	}
+
+	domain := &Domain{cdomain, conn}
+	runtime.SetFinalizer(domain, cleanupDomain)
+
+	return domain, nil
+}
+
 func (d *Domain) GetName() (string, error) {
 	result := C.virDomainGetName(d.cptr)
 	if result == nil {
