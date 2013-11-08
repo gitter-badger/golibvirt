@@ -24,6 +24,7 @@ import (
 	//"encoding/binary"
 	// "fmt"
 	"errors"
+	"runtime"
 	"unsafe"
 )
 
@@ -148,6 +149,12 @@ const (
 	VIR_CONNECT_LIST_STORAGE_POOLS_MPATH        = C.VIR_CONNECT_LIST_STORAGE_POOLS_MPATH
 	VIR_CONNECT_LIST_STORAGE_POOLS_RBD          = C.VIR_CONNECT_LIST_STORAGE_POOLS_RBD
 	VIR_CONNECT_LIST_STORAGE_POOLS_SHEEPDOG     = C.VIR_CONNECT_LIST_STORAGE_POOLS_SHEEPDOG
+)
+
+//virDomainDestroyFlagsValues
+const (
+	VIR_DOMAIN_DESTROY_DEFAULT  = C.VIR_DOMAIN_DESTROY_DEFAULT  //Default behavior - could lead to data loss!!
+	VIR_DOMAIN_DESTROY_GRACEFUL = C.VIR_DOMAIN_DESTROY_GRACEFUL //only SIGTERM, no SIGKILL
 )
 
 type Hypervisor struct {
@@ -387,7 +394,7 @@ func (h *Hypervisor) ListDomains(flags uint) ([]*Domain, error) {
 	p := (*[1 << 30]C.virDomainPtr)(unsafe.Pointer(cdomains))
 
 	for i := 0; i < int(result); i++ {
-		domains[i] = newDomain(p[i], h.cptr)
+		domains[i] = newDomain(p[i])
 	}
 	defer C.free(unsafe.Pointer(cdomains))
 
@@ -964,22 +971,101 @@ func (h *Hypervisor) FindStoragePoolSources() {}
  * and using factory pattern
  */
 
-//Domain
+//Domain factories
 func (h *Hypervisor) CreateDomain(xml string, flags uint) (*Domain, error) {
-	return createDomain(h.cptr, xml, flags)
+	cxml := C.CString(xml)
+	defer C.free(unsafe.Pointer(cxml))
+
+	cdomain := C.virDomainCreateXML(h.cptr, cxml, C.uint(flags))
+	if cdomain == nil {
+		return nil, GetLastError()
+	}
+
+	domain := &Domain{cdomain}
+	runtime.SetFinalizer(domain, cleanupDomain)
+
+	return domain, nil
+}
+
+func (h *Hypervisor) DestroyDomain(domain *Domain, flags uint) error {
+	result := C.virDomainDestroyFlags(domain.cptr, C.uint(flags))
+	if result == -1 {
+		return GetLastError()
+	}
+
+	domain = nil
+
+	return nil
 }
 
 func (h *Hypervisor) DefineDomain(xml string) (*Domain, error) {
-	return defineDomain(h.cptr, xml)
+	cxml := C.CString(xml)
+	defer C.free(unsafe.Pointer(cxml))
+
+	cdomain := C.virDomainDefineXML(h.cptr, cxml)
+	if cdomain == nil {
+		return nil, GetLastError()
+	}
+
+	domain := &Domain{cdomain}
+	runtime.SetFinalizer(domain, cleanupDomain)
+
+	return domain, nil
 }
 
-func (h *Hypervisor) RestoreDomain(fromFile string) error {
-	return restoreDomain(h.cptr, fromFile)
+func (h *Hypervisor) RestoreDomain(filepath string) error {
+	cfilepath := C.CString(filepath)
+	defer C.free(unsafe.Pointer(cfilepath))
+
+	result := C.virDomainRestore(h.cptr, cfilepath)
+	if result == -1 {
+		return GetLastError()
+	}
+
+	return nil
 }
 
-func (h *Hypervisor) LookupDomainById()   {}
-func (h *Hypervisor) LookupDomainByName() {}
-func (h *Hypervisor) LookupDomainByUUID() {}
+func (h *Hypervisor) LookupDomainById(id int) (*Domain, error) {
+	cdomain := C.virDomainLookupByID(h.cptr, C.int(id))
+	if cdomain == nil {
+		return nil, GetLastError()
+	}
+
+	domain := &Domain{cdomain}
+	runtime.SetFinalizer(domain, cleanupDomain)
+
+	return domain, nil
+}
+
+func (h *Hypervisor) LookupDomainByName(name string) (*Domain, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+
+	cdomain := C.virDomainLookupByName(h.cptr, cname)
+	if cdomain == nil {
+		return nil, GetLastError()
+	}
+
+	domain := &Domain{cdomain}
+	runtime.SetFinalizer(domain, cleanupDomain)
+
+	return domain, nil
+}
+
+func (h *Hypervisor) LookupDomainByUUID(uuid string) (*Domain, error) {
+	cuuid := C.CString(uuid)
+	defer C.free(unsafe.Pointer(cuuid))
+
+	cdomain := C.virDomainLookupByUUIDString(h.cptr, cuuid)
+	if cdomain == nil {
+		return nil, GetLastError()
+	}
+
+	domain := &Domain{cdomain}
+	runtime.SetFinalizer(domain, cleanupDomain)
+
+	return domain, nil
+}
 
 //NodeDevice
 func (h *Hypervisor) CreateNodeDevice()       {}
