@@ -206,7 +206,7 @@ func (t *TypedParameters) TypedParamsGetFloat64(name string) (float64, error) {
     if result == -1 {
         return 0.0, GetLastError()
     }
-    return 0.0, fmt.Errorf("Can't locate boolean parameter: %s", name)
+    return 0.0, fmt.Errorf("Can't locate float64 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetInt32(name string) (int32, error) {
@@ -222,7 +222,7 @@ func (t *TypedParameters) TypedParamsGetInt32(name string) (int32, error) {
     if result == -1 {
         return 0, GetLastError()
     }
-    return 0, fmt.Errorf("Can't locate boolean parameter: %s", name)
+    return 0, fmt.Errorf("Can't locate int32 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetInt64(name string) (int64, error) {
@@ -238,7 +238,7 @@ func (t *TypedParameters) TypedParamsGetInt64(name string) (int64, error) {
     if result == -1 {
         return 0, GetLastError()
     }
-    return 0, fmt.Errorf("Can't locate boolean parameter: %s", name)
+    return 0, fmt.Errorf("Can't locate int64 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetUInt32(name string) (uint32, error) {
@@ -254,7 +254,7 @@ func (t *TypedParameters) TypedParamsGetUInt32(name string) (uint32, error) {
     if result == -1 {
         return 0, GetLastError()
     }
-    return 0, fmt.Errorf("Can't locate boolean parameter: %s", name)
+    return 0, fmt.Errorf("Can't locate uint32 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetUInt64(name string) (uint64, error) {
@@ -270,5 +270,5 @@ func (t *TypedParameters) TypedParamsGetUInt64(name string) (uint64, error) {
     if result == -1 {
         return 0, GetLastError()
     }
-    return 0, fmt.Errorf("Can't locate boolean parameter: %s", name)
+    return 0, fmt.Errorf("Can't locate uint64 parameter: %s", name)
 }
