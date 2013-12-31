@@ -12,6 +12,7 @@ import (
 	"encoding/binary"
         "fmt"
 	"reflect"
+        "runtime"
 	"unsafe"
 )
 
@@ -39,6 +40,14 @@ type TypedParameters struct {
     capacity C.int
 }
 
+func NewTypedParameters() *TypedParameters {
+    t := new(TypedParameters)
+    runtime.SetFinalizer(t, func(t *TypedParameters) {
+        C.virTypedParamsFree(t.cptr, t.length)
+    })
+    return t
+}
+
 func (t *TypedParameters) Len() int {
     return int(t.length)
 }
@@ -46,6 +55,9 @@ func (t *TypedParameters) Len() int {
 func (t *TypedParameters) Cap() int {
     return int(t.capacity)
 }
+
+// This is pretty dirty, and will probably go away.
+// For now, only use for debugging
 
 func (t *TypedParameters) GetTypedParameters() []TypedParameter {
 	var pointerSlice []*C.virTypedParameter
@@ -272,3 +284,4 @@ func (t *TypedParameters) TypedParamsGetUInt64(name string) (uint64, error) {
     }
     return 0, fmt.Errorf("Can't locate uint64 parameter: %s", name)
 }
+
