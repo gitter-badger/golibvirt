@@ -10,9 +10,9 @@ import "C"
 
 import (
 	"encoding/binary"
-        "fmt"
+	"fmt"
 	"reflect"
-        "runtime"
+	"runtime"
 	"unsafe"
 )
 
@@ -26,34 +26,32 @@ const (
 	VIR_TYPED_PARAM_STRING  = C.VIR_TYPED_PARAM_STRING  /* string case */
 )
 
-
 type TypedParameter struct {
 	Name  string
 	Type  int
 	Value interface{}
 }
 
-
 type TypedParameters struct {
-    cptr C.virTypedParameterPtr
-    length C.int
-    capacity C.int
+	cptr     C.virTypedParameterPtr
+	length   C.int
+	capacity C.int
 }
 
 func NewTypedParameters() *TypedParameters {
-    t := new(TypedParameters)
-    runtime.SetFinalizer(t, func(t *TypedParameters) {
-        C.virTypedParamsFree(t.cptr, t.length)
-    })
-    return t
+	t := new(TypedParameters)
+	runtime.SetFinalizer(t, func(t *TypedParameters) {
+		C.virTypedParamsFree(t.cptr, t.length)
+	})
+	return t
 }
 
 func (t *TypedParameters) Len() int {
-    return int(t.length)
+	return int(t.length)
 }
 
 func (t *TypedParameters) Cap() int {
-    return int(t.capacity)
+	return int(t.capacity)
 }
 
 // This is pretty dirty, and will probably go away.
@@ -104,184 +102,182 @@ func (t *TypedParameters) GetTypedParameters() []TypedParameter {
 }
 
 func (t *TypedParameters) TypedParamsAddBool(val bool, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var tmp uint8
-    if val {
-        tmp = 1
-    } else {
-        tmp = 0
-    }
-    result := C.virTypedParamsAddBoolean(&t.cptr, &t.length, &t.capacity, cname, C.int(tmp))
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	var tmp uint8
+	if val {
+		tmp = 1
+	} else {
+		tmp = 0
+	}
+	result := C.virTypedParamsAddBoolean(&t.cptr, &t.length, &t.capacity, cname, C.int(tmp))
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
-
 func (t *TypedParameters) TypedParamsAddFloat64(val float64, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    result := C.virTypedParamsAddDouble(&t.cptr, &t.length, &t.capacity, cname, C.double(val))
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	result := C.virTypedParamsAddDouble(&t.cptr, &t.length, &t.capacity, cname, C.double(val))
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
 func (t *TypedParameters) TypedParamsAddInt32(val int32, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    result := C.virTypedParamsAddInt(&t.cptr, &t.length, &t.capacity, cname, C.int(val))
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	result := C.virTypedParamsAddInt(&t.cptr, &t.length, &t.capacity, cname, C.int(val))
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
 func (t *TypedParameters) TypedParamsAddInt64(val int64, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    result := C.virTypedParamsAddLLong(&t.cptr, &t.length, &t.capacity, cname, C.longlong(val))
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	result := C.virTypedParamsAddLLong(&t.cptr, &t.length, &t.capacity, cname, C.longlong(val))
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
 func (t *TypedParameters) TypedParamsAddString(val string, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    tmp := C.CString(val)
-    result := C.virTypedParamsAddString(&t.cptr, &t.length, &t.capacity, cname, tmp)
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	tmp := C.CString(val)
+	result := C.virTypedParamsAddString(&t.cptr, &t.length, &t.capacity, cname, tmp)
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
 func (t *TypedParameters) TypedParamsAddUInt32(val uint32, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    result := C.virTypedParamsAddUInt(&t.cptr, &t.length, &t.capacity, cname, C.uint(val))
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	result := C.virTypedParamsAddUInt(&t.cptr, &t.length, &t.capacity, cname, C.uint(val))
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
 func (t *TypedParameters) TypedParamsAddUInt64(val uint64, name string) error {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    result := C.virTypedParamsAddULLong(&t.cptr, &t.length, &t.capacity, cname, C.ulonglong(val))
-    if result == -1 {
-        return GetLastError()
-    }
-    return nil
+	result := C.virTypedParamsAddULLong(&t.cptr, &t.length, &t.capacity, cname, C.ulonglong(val))
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
 }
 
 func (t *TypedParameters) TypedParamsGetBool(name string) (bool, error) {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var cval C.int
-    result := C.virTypedParamsGetBoolean(t.cptr, t.length, cname, &cval)
+	var cval C.int
+	result := C.virTypedParamsGetBoolean(t.cptr, t.length, cname, &cval)
 
-    if result > 0 {
-        return int(cval) != 0, nil
-    }
-    if result == -1 {
-        return false, GetLastError()
-    }
-    return false, fmt.Errorf("Can't locate boolean parameter: %s", name)
+	if result > 0 {
+		return int(cval) != 0, nil
+	}
+	if result == -1 {
+		return false, GetLastError()
+	}
+	return false, fmt.Errorf("Can't locate boolean parameter: %s", name)
 
 }
 
 func (t *TypedParameters) TypedParamsGetFloat64(name string) (float64, error) {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var cval C.double
-    result := C.virTypedParamsGetDouble(t.cptr, t.length, cname, &cval)
+	var cval C.double
+	result := C.virTypedParamsGetDouble(t.cptr, t.length, cname, &cval)
 
-    if result > 0 {
-        return float64(cval) , nil
-    }
-    if result == -1 {
-        return 0.0, GetLastError()
-    }
-    return 0.0, fmt.Errorf("Can't locate float64 parameter: %s", name)
+	if result > 0 {
+		return float64(cval), nil
+	}
+	if result == -1 {
+		return 0.0, GetLastError()
+	}
+	return 0.0, fmt.Errorf("Can't locate float64 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetInt32(name string) (int32, error) {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var cval C.int
-    result := C.virTypedParamsGetInt(t.cptr, t.length, cname, &cval)
+	var cval C.int
+	result := C.virTypedParamsGetInt(t.cptr, t.length, cname, &cval)
 
-    if result > 0 {
-        return int32(cval) , nil
-    }
-    if result == -1 {
-        return 0, GetLastError()
-    }
-    return 0, fmt.Errorf("Can't locate int32 parameter: %s", name)
+	if result > 0 {
+		return int32(cval), nil
+	}
+	if result == -1 {
+		return 0, GetLastError()
+	}
+	return 0, fmt.Errorf("Can't locate int32 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetInt64(name string) (int64, error) {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var cval C.longlong
-    result := C.virTypedParamsGetLLong(t.cptr, t.length, cname, &cval)
+	var cval C.longlong
+	result := C.virTypedParamsGetLLong(t.cptr, t.length, cname, &cval)
 
-    if result > 0 {
-        return int64(cval) , nil
-    }
-    if result == -1 {
-        return 0, GetLastError()
-    }
-    return 0, fmt.Errorf("Can't locate int64 parameter: %s", name)
+	if result > 0 {
+		return int64(cval), nil
+	}
+	if result == -1 {
+		return 0, GetLastError()
+	}
+	return 0, fmt.Errorf("Can't locate int64 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetUInt32(name string) (uint32, error) {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var cval C.uint
-    result := C.virTypedParamsGetUInt(t.cptr, t.length, cname, &cval)
+	var cval C.uint
+	result := C.virTypedParamsGetUInt(t.cptr, t.length, cname, &cval)
 
-    if result > 0 {
-        return uint32(cval) , nil
-    }
-    if result == -1 {
-        return 0, GetLastError()
-    }
-    return 0, fmt.Errorf("Can't locate uint32 parameter: %s", name)
+	if result > 0 {
+		return uint32(cval), nil
+	}
+	if result == -1 {
+		return 0, GetLastError()
+	}
+	return 0, fmt.Errorf("Can't locate uint32 parameter: %s", name)
 }
 
 func (t *TypedParameters) TypedParamsGetUInt64(name string) (uint64, error) {
-    cname := C.CString(name)
-    defer C.free(unsafe.Pointer(cname))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
 
-    var cval C.ulonglong
-    result := C.virTypedParamsGetULLong(t.cptr, t.length, cname, &cval)
+	var cval C.ulonglong
+	result := C.virTypedParamsGetULLong(t.cptr, t.length, cname, &cval)
 
-    if result > 0 {
-        return uint64(cval) , nil
-    }
-    if result == -1 {
-        return 0, GetLastError()
-    }
-    return 0, fmt.Errorf("Can't locate uint64 parameter: %s", name)
+	if result > 0 {
+		return uint64(cval), nil
+	}
+	if result == -1 {
+		return 0, GetLastError()
+	}
+	return 0, fmt.Errorf("Can't locate uint64 parameter: %s", name)
 }
-
