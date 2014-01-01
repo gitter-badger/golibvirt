@@ -722,12 +722,7 @@ func TestHasCurrentSnapshot(t *testing.T) {
 		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
 	}
 
-	want := "this function is not supported by the connection driver: virDomainHasCurrentSnapshot"
-
 	hasSnapshot, err := domain.HasCurrentSnapshot(0)
-	if err.Error() != want {
-		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, want)
-	}
 
 	if hasSnapshot {
 		t.Errorf("incorrect result\ngot:  %t\nwant: %t", hasSnapshot, false)
