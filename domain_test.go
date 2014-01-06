@@ -695,9 +695,56 @@ func TestGetState(t *testing.T) {
 }
 
 //TODO
-func TestGetJobInfo(t *testing.T)         {}
-func TestGetJobStats(t *testing.T)        {}
-func TestAbortCurrentJob(t *testing.T)    {}
+func TestGetJobInfo(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
+	domain, err := h.LookupDomainByName("test")
+	if err != nil {
+		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
+	}
+
+	want := "this function is not supported by the connection driver: virDomainGetJobInfo"
+
+	_, err = domain.GetJobInfo()
+	if err.Error() != want {
+		t.Errorf("incorrect result\ngot:  %s\nwant: %s", err.Error(), want)
+	}
+
+}
+
+func TestGetJobStats(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
+	domain, err := h.LookupDomainByName("test")
+	if err != nil {
+		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
+	}
+	want := "this function is not supported by the connection driver: virDomainGetJobStats"
+
+	_, err = domain.GetJobStats()
+	if err.Error() != want {
+		t.Errorf("incorrect result\ngot:  %s\nwant: %s", err.Error(), want)
+	}
+
+}
+
+func TestAbortCurrentJob(t *testing.T) {
+	h, _ := NewHypervisor("test:///default")
+	defer h.CloseConnection()
+
+	domain, err := h.LookupDomainByName("test")
+	if err != nil {
+		t.Errorf("incorrect result\ngot:  %#v\nwant: %#v", err, nil)
+	}
+	want := "this function is not supported by the connection driver: virDomainAbortJob"
+
+	err = domain.AbortCurrentJob()
+	if err.Error() != want {
+		t.Errorf("incorrect result\ngot:  %s\nwant: %s", err.Error(), want)
+	}
+}
 func TestGetSchedType(t *testing.T)       {}
 func TestGetSchedParams(t *testing.T)     {}
 func TestSetSchedParams(t *testing.T)     {}
