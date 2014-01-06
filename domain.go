@@ -122,6 +122,21 @@ type DomainInfo struct {
 	CpuTime   uint64 //the CPU time used in nanoseconds
 }
 
+type DomainJobInfo struct {
+	JobType       int //Time is measured in milliseconds
+	TimeElapsed   uint64
+	TimeRemaining uint64
+	DataTotal     uint64
+	DataProcessed uint64
+	DataRemaining uint64
+	MemTotal      uint64
+	MemProcessed  uint64
+	MemRemaining  uint64
+	FileTotal     uint64
+	FileProcessed uint64
+	FileRemaining uint64
+}
+
 func cleanupDomain(domain *Domain) {
 	if domain.cptr != nil {
 		C.virDomainFree(domain.cptr)
@@ -466,10 +481,50 @@ func (d *Domain) GetState(flags uint16) (int, int, error) {
 	return int(cstate), int(creason), nil
 }
 
+func (d *Domain) GetJobInfo() (*DomainJobInfo, error) {
+	var cJobInfo C.virDomainJobInfo
+	result := C.virDomainGetJobInfo(d.cptr, &cJobInfo)
+	if result == -1 {
+		return nil, GetLastError()
+	}
+
+	return &DomainJobInfo{
+		int(cJobInfo._type),
+		uint64(cJobInfo.timeElapsed),
+		uint64(cJobInfo.timeRemaining),
+		uint64(cJobInfo.dataTotal),
+		uint64(cJobInfo.dataProcessed),
+		uint64(cJobInfo.dataRemaining),
+		uint64(cJobInfo.memTotal),
+		uint64(cJobInfo.memProcessed),
+		uint64(cJobInfo.memRemaining),
+		uint64(cJobInfo.memTotal),
+		uint64(cJobInfo.memProcessed),
+		uint64(cJobInfo.memRemaining),
+	}, nil
+
+}
+
+func (d *Domain) GetJobStats() (*TypedParameters, error) {
+	params := new(TypedParameters)
+	var jobType C.int
+	result := C.virDomainGetJobStats(d.cptr, &jobType, &params.cptr, &params.length, 0)
+
+	if result == -1 {
+		return nil, GetLastError()
+	}
+	return params, nil
+}
+
+func (d *Domain) AbortCurrentJob() error {
+	result := C.virDomainAbortJob(d.cptr)
+	if result == -1 {
+		return GetLastError()
+	}
+	return nil
+}
+
 //TODO
-func (d *Domain) GetJobInfo()         {}
-func (d *Domain) GetJobStats()        {}
-func (d *Domain) AbortCurrentJob()    {}
 func (d *Domain) GetSchedType()       {}
 func (d *Domain) GetSchedParams()     {}
 func (d *Domain) SetSchedParams()     {}
