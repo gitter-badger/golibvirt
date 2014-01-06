@@ -489,18 +489,18 @@ func (d *Domain) GetJobInfo() (*DomainJobInfo, error) {
 	}
 
 	return &DomainJobInfo{
-		int(cJobInfo._type),
-		uint64(cJobInfo.timeElapsed),
-		uint64(cJobInfo.timeRemaining),
-		uint64(cJobInfo.dataTotal),
-		uint64(cJobInfo.dataProcessed),
-		uint64(cJobInfo.dataRemaining),
-		uint64(cJobInfo.memTotal),
-		uint64(cJobInfo.memProcessed),
-		uint64(cJobInfo.memRemaining),
-		uint64(cJobInfo.memTotal),
-		uint64(cJobInfo.memProcessed),
-		uint64(cJobInfo.memRemaining),
+		JobType:       int(cJobInfo._type),
+		TimeElapsed:   uint64(cJobInfo.timeElapsed),
+		TimeRemaining: uint64(cJobInfo.timeRemaining),
+		DataTotal:     uint64(cJobInfo.dataTotal),
+		DataProcessed: uint64(cJobInfo.dataProcessed),
+		DataRemaining: uint64(cJobInfo.dataRemaining),
+		MemTotal:      uint64(cJobInfo.memTotal),
+		MemProcessed:  uint64(cJobInfo.memProcessed),
+		MemRemaining:  uint64(cJobInfo.memRemaining),
+		FileTotal:     uint64(cJobInfo.memTotal),
+		FileProcessed: uint64(cJobInfo.memProcessed),
+		FileRemaining: uint64(cJobInfo.memRemaining),
 	}, nil
 
 }
