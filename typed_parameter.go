@@ -4,7 +4,17 @@ package libvirt
 #cgo pkg-config: libvirt
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
+#include <string.h>
 #include <stdlib.h>
+
+// Go Helpers
+
+virTypedParameterPtr virTypedParameterAllocate(int nparams) {
+    virTypedParameterPtr params = malloc(sizeof(virTypedParameter) * nparams);
+    memset(params, 0, sizeof(virTypedParameter) * nparams);
+    return params;
+}
+
 */
 import "C"
 
@@ -38,10 +48,16 @@ type TypedParameters struct {
 	capacity C.int
 }
 
-func NewTypedParameters() *TypedParameters {
+func NewTypedParameters(nparams int) *TypedParameters {
 	t := new(TypedParameters)
+	if nparams > 0 {
+		t.cptr = C.virTypedParameterAllocate(C.int(nparams))
+		t.capacity = C.int(nparams)
+	}
 	runtime.SetFinalizer(t, func(t *TypedParameters) {
-		C.virTypedParamsFree(t.cptr, t.length)
+		if t.cptr != nil {
+			C.virTypedParamsFree(t.cptr, t.length)
+		}
 	})
 	return t
 }
