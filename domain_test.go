@@ -24,7 +24,7 @@ func TestCreateDomain(t *testing.T) {
     <boot dev='network'/>
   </os>
 
-  <memory>654321</memory>
+  <memory unit='KiB'>654321</memory>
   <vcpu>1</vcpu>
 
   <features>
@@ -57,7 +57,7 @@ func TestDefineDomain(t *testing.T) {
     <boot dev='network'/>
   </os>
 
-  <memory>654321</memory>
+  <memory unit='KiB'>654321</memory>
   <vcpu>1</vcpu>
 
   <features>
