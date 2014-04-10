@@ -7,7 +7,7 @@ import (
 )
 
 func TestTypedParamsOpsBool(t *testing.T) {
-	params := NewTypedParameters()
+	params := NewTypedParameters(1)
 
 	if err := params.TypedParamsAddBool(true, "true"); err != nil {
 		t.Errorf("Add boolean param failed: %#v", err)
@@ -31,7 +31,7 @@ func TestTypedParamsOpsBool(t *testing.T) {
 }
 
 func TestTypedParamsOpsFloat64(t *testing.T) {
-	params := NewTypedParameters()
+	params := NewTypedParameters(1)
 
 	if err := params.TypedParamsAddFloat64(math.Pi, "pi"); err != nil {
 		t.Errorf("Add float64 param failed: %#v", err)
@@ -56,7 +56,7 @@ func TestTypedParamsOpsFloat64(t *testing.T) {
 }
 
 func TestTypedParamsOpsInt32(t *testing.T) {
-	params := NewTypedParameters()
+	params := NewTypedParameters(1)
 
 	pvalue := rand.Int31()
 	if err := params.TypedParamsAddInt32(pvalue, "random"); err != nil {
@@ -80,7 +80,7 @@ func TestTypedParamsOpsInt32(t *testing.T) {
 }
 
 func TestTypedParamsOpsInt64(t *testing.T) {
-	params := NewTypedParameters()
+	params := NewTypedParameters(1)
 
 	pvalue := rand.Int63()
 	if err := params.TypedParamsAddInt64(pvalue, "random"); err != nil {
@@ -104,7 +104,7 @@ func TestTypedParamsOpsInt64(t *testing.T) {
 }
 
 func TestTypedParamsOpsAddUInt32(t *testing.T) {
-	params := NewTypedParameters()
+	params := NewTypedParameters(1)
 
 	pvalue := uint32(rand.Int31())
 	if err := params.TypedParamsAddUInt32(pvalue, "random"); err != nil {
@@ -128,7 +128,7 @@ func TestTypedParamsOpsAddUInt32(t *testing.T) {
 }
 
 func TestTypedParamsOpsUInt64(t *testing.T) {
-	params := NewTypedParameters()
+	params := NewTypedParameters(1)
 
 	pvalue := uint64(rand.Int63())
 	if err := params.TypedParamsAddUInt64(pvalue, "random"); err != nil {
