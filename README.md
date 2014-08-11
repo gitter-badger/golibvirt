@@ -39,9 +39,6 @@ For now, please take a look at the tests. Further ahead I will be releasing more
 ## API
 TODO
 
-## License
-Copyright 2014 Cloudescape. All rights reserved.
-
 [libvirt_home]: http://www.libvirt.org
 [libvirt_dev]: http://libvirt.org/deployment.html
 [xen_home]: http://www.cl.cam.ac.uk/Research/SRG/netos/xen/index.html
