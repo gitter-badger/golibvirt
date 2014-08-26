@@ -31,7 +31,7 @@ Golibvirt is a set of bindings to the Libvirt C API, which allows to use it from
 You must have [Go](http://golang.org) and [Libvirt][libvirt_dev] already installed to be able to build Golibvirt.
 
 ### Get and install Golibvirt
-    $ go get github.com/c4milo/golibvirt.git
+    $ go get github.com/cloudescape/golibvirt.git
 
 ## Example of use
 For now, please take a look at the tests. Further ahead I will be releasing more meaninful examples
