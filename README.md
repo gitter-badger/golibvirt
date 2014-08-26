@@ -37,7 +37,7 @@ You must have [Go](http://golang.org) and [Libvirt][libvirt_dev] already install
 For now, please take a look at the tests. Further ahead I will be releasing more meaninful examples
     
 ## API
-TODO
+http://godoc.org/github.com/cloudescape/golibvirt
 
 [libvirt_home]: http://www.libvirt.org
 [libvirt_dev]: http://libvirt.org/deployment.html
