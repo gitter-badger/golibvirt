@@ -13,74 +13,104 @@ import (
 	"unsafe"
 )
 
-//virDomainCreateFlags
+// virDomainCreateFlags
 const (
-	VIR_DOMAIN_NONE               = C.VIR_DOMAIN_NONE               //Default behavior
-	VIR_DOMAIN_START_PAUSED       = C.VIR_DOMAIN_START_PAUSED       //Launch guest in paused state
-	VIR_DOMAIN_START_AUTODESTROY  = C.VIR_DOMAIN_START_AUTODESTROY  //Automatically kill guest when hypervisor.CloseConnection() is called
-	VIR_DOMAIN_START_BYPASS_CACHE = C.VIR_DOMAIN_START_BYPASS_CACHE //Avoid file system cache pollution
-	VIR_DOMAIN_START_FORCE_BOOT   = C.VIR_DOMAIN_START_FORCE_BOOT   //Boot, discarding any managed save
+	// Default behavior
+	VIR_DOMAIN_NONE = C.VIR_DOMAIN_NONE
+	// Launch guest in paused state
+	VIR_DOMAIN_START_PAUSED = C.VIR_DOMAIN_START_PAUSED
+	// Automatically kill guest when hypervisor.CloseConnection() is called
+	VIR_DOMAIN_START_AUTODESTROY = C.VIR_DOMAIN_START_AUTODESTROY
+	// Avoid file system cache pollution
+	VIR_DOMAIN_START_BYPASS_CACHE = C.VIR_DOMAIN_START_BYPASS_CACHE
+	// Boot, discarding any managed save
+	VIR_DOMAIN_START_FORCE_BOOT = C.VIR_DOMAIN_START_FORCE_BOOT
 )
 
-//UUID
+// UUID
 const (
 	VIR_UUID_STRING_BUFLEN = C.VIR_UUID_STRING_BUFLEN
 )
 
-//virDomainUndefineFlagsValues
+// virDomainUndefineFlagsValues
 const (
-	VIR_DOMAIN_UNDEFINE_NOFLAGS            = 0
-	VIR_DOMAIN_UNDEFINE_MANAGED_SAVE       = C.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE       //Also remove any managed save
-	VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA = C.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA //If last use of domain, then also remove any snapshot metadata Future undefine control flags should come here.
+	VIR_DOMAIN_UNDEFINE_NOFLAGS = 0
+	// Also remove any managed save
+	VIR_DOMAIN_UNDEFINE_MANAGED_SAVE = C.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE
+	// If last use of domain, then also remove any snapshot metadata Future undefine control flags should come here.
+	VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA = C.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
 )
 
-//virDomainState
+// virDomainState
 const (
-	VIR_DOMAIN_NOSTATE     = C.VIR_DOMAIN_NOSTATE     //no state
-	VIR_DOMAIN_RUNNING     = C.VIR_DOMAIN_RUNNING     //the domain is running
-	VIR_DOMAIN_BLOCKED     = C.VIR_DOMAIN_BLOCKED     //the domain is blocked on resource
-	VIR_DOMAIN_PAUSED      = C.VIR_DOMAIN_PAUSED      //the domain is paused by user
-	VIR_DOMAIN_SHUTDOWN    = C.VIR_DOMAIN_SHUTDOWN    //the domain is being shut down
-	VIR_DOMAIN_SHUTOFF     = C.VIR_DOMAIN_SHUTOFF     //the domain is shut off
-	VIR_DOMAIN_CRASHED     = C.VIR_DOMAIN_CRASHED     //the domain is crashed
-	VIR_DOMAIN_PMSUSPENDED = C.VIR_DOMAIN_PMSUSPENDED //the domain is suspended by guest power management
-	//VIR_DOMAIN_LAST        = C.VIR_DOMAIN_LAST        //NB: this enum value will increase over time as new events are added to the libvirt API. It reflects the last state supported by this version of the libvirt API.
+	// no state
+	VIR_DOMAIN_NOSTATE = C.VIR_DOMAIN_NOSTATE
+	// the domain is running
+	VIR_DOMAIN_RUNNING = C.VIR_DOMAIN_RUNNING
+	// the domain is blocked on resource
+	VIR_DOMAIN_BLOCKED = C.VIR_DOMAIN_BLOCKED
+	// the domain is paused by user
+	VIR_DOMAIN_PAUSED = C.VIR_DOMAIN_PAUSED
+	// the domain is being shut down
+	VIR_DOMAIN_SHUTDOWN = C.VIR_DOMAIN_SHUTDOWN
+	// the domain is shut off
+	VIR_DOMAIN_SHUTOFF = C.VIR_DOMAIN_SHUTOFF
+	// the domain is crashed
+	VIR_DOMAIN_CRASHED = C.VIR_DOMAIN_CRASHED
+	// the domain is suspended by guest power management
+	VIR_DOMAIN_PMSUSPENDED = C.VIR_DOMAIN_PMSUSPENDED
+	// NB: this enum value will increase over time as new events are added to the libvirt API.
+	// It reflects the last state supported by this version of the libvirt API.
+	//VIR_DOMAIN_LAST        = C.VIR_DOMAIN_LAST
 )
 
-//virDomainModificationImpact
+// virDomainModificationImpact
 const (
-	VIR_DOMAIN_AFFECT_CURRENT = C.VIR_DOMAIN_AFFECT_CURRENT //Affect current domain state.
-	VIR_DOMAIN_AFFECT_LIVE    = C.VIR_DOMAIN_AFFECT_LIVE    //Affect running domain state.
-	VIR_DOMAIN_AFFECT_CONFIG  = C.VIR_DOMAIN_AFFECT_CONFIG  //Affect persistent domain state. 1 << 2 is reserved for virTypedParameterFlags
+	// Affect current domain state.
+	VIR_DOMAIN_AFFECT_CURRENT = C.VIR_DOMAIN_AFFECT_CURRENT
+	// Affect running domain state.
+	VIR_DOMAIN_AFFECT_LIVE = C.VIR_DOMAIN_AFFECT_LIVE
+	// Affect persistent domain state. 1 << 2 is reserved for virTypedParameterFlags
+	VIR_DOMAIN_AFFECT_CONFIG = C.VIR_DOMAIN_AFFECT_CONFIG
 )
 
-//virDomainMemoryModFlags
+// virDomainMemoryModFlags
 const (
-	VIR_DOMAIN_MEM_CONFIG  = C.VIR_DOMAIN_AFFECT_CONFIG //Additionally, these flags may be bitwise-OR'd in
+	// Additionally, these flags may be bitwise-OR'd in
+	VIR_DOMAIN_MEM_CONFIG  = C.VIR_DOMAIN_AFFECT_CONFIG
 	VIR_DOMAIN_MEM_CURRENT = C.VIR_DOMAIN_AFFECT_CURRENT
 	VIR_DOMAIN_MEM_LIVE    = C.VIR_DOMAIN_AFFECT_LIVE
-	VIR_DOMAIN_MEM_MAXIMUM = C.VIR_DOMAIN_MEM_MAXIMUM //affect Max rather than current
+	// affect Max rather than current
+	VIR_DOMAIN_MEM_MAXIMUM = C.VIR_DOMAIN_MEM_MAXIMUM
 )
 
-//virDomainVcpuFlags
+// virDomainVcpuFlags
 const (
-	VIR_DOMAIN_VCPU_CONFIG  = C.VIR_DOMAIN_AFFECT_CONFIG //Additionally, these flags may be bitwise-OR'd in.
+	// Additionally, these flags may be bitwise-OR'd in.
+	VIR_DOMAIN_VCPU_CONFIG  = C.VIR_DOMAIN_AFFECT_CONFIG
 	VIR_DOMAIN_VCPU_CURRENT = C.VIR_DOMAIN_AFFECT_CURRENT
 	VIR_DOMAIN_VCPU_LIVE    = C.VIR_DOMAIN_AFFECT_LIVE
-	VIR_DOMAIN_VCPU_MAXIMUM = C.VIR_DOMAIN_VCPU_MAXIMUM //Max rather than current count
-	VIR_DOMAIN_VCPU_GUEST   = C.VIR_DOMAIN_VCPU_GUEST   //Modify state of the cpu in the guest
+	// Max rather than current count
+	VIR_DOMAIN_VCPU_MAXIMUM = C.VIR_DOMAIN_VCPU_MAXIMUM
+	// Modify state of the cpu in the guest
+	VIR_DOMAIN_VCPU_GUEST = C.VIR_DOMAIN_VCPU_GUEST
 )
 
-//virDomainShutdownFlagValues
+// virDomainShutdownFlagValues
 const (
-	VIR_DOMAIN_SHUTDOWN_DEFAULT        = C.VIR_DOMAIN_SHUTDOWN_DEFAULT        //hypervisor choice
-	VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN = C.VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN //Send ACPI event
-	VIR_DOMAIN_SHUTDOWN_GUEST_AGENT    = C.VIR_DOMAIN_SHUTDOWN_GUEST_AGENT    //Use guest agent
-	VIR_DOMAIN_SHUTDOWN_INITCTL        = C.VIR_DOMAIN_SHUTDOWN_INITCTL        //Use initctl
-	VIR_DOMAIN_SHUTDOWN_SIGNAL         = C.VIR_DOMAIN_SHUTDOWN_SIGNAL         //Send a signal
+	// hypervisor choice
+	VIR_DOMAIN_SHUTDOWN_DEFAULT = C.VIR_DOMAIN_SHUTDOWN_DEFAULT
+	// Send ACPI event
+	VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN = C.VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN
+	// Use guest agent
+	VIR_DOMAIN_SHUTDOWN_GUEST_AGENT = C.VIR_DOMAIN_SHUTDOWN_GUEST_AGENT
+	// Use initctl
+	VIR_DOMAIN_SHUTDOWN_INITCTL = C.VIR_DOMAIN_SHUTDOWN_INITCTL
+	// Send a signal
+	VIR_DOMAIN_SHUTDOWN_SIGNAL = C.VIR_DOMAIN_SHUTDOWN_SIGNAL
 )
 
-//virKeycodeSet
+// virKeycodeSet
 const (
 	VIR_KEYCODE_SET_LINUX  = C.VIR_KEYCODE_SET_LINUX
 	VIR_KEYCODE_SET_XT     = C.VIR_KEYCODE_SET_XT
@@ -94,20 +124,25 @@ const (
 	VIR_KEYCODE_SET_RFB    = C.VIR_KEYCODE_SET_RFB
 )
 
-//virDomainDeviceModifyFlags
+// virDomainDeviceModifyFlags
 const (
 	VIR_DOMAIN_DEVICE_MODIFY_CONFIG  = C.VIR_DOMAIN_AFFECT_CONFIG
 	VIR_DOMAIN_DEVICE_MODIFY_CURRENT = C.VIR_DOMAIN_AFFECT_CURRENT
 	VIR_DOMAIN_DEVICE_MODIFY_LIVE    = C.VIR_DOMAIN_AFFECT_LIVE
-	VIR_DOMAIN_DEVICE_MODIFY_FORCE   = C.VIR_DOMAIN_DEVICE_MODIFY_FORCE //Forcibly modify device (ex. force eject a cdrom)
+	// Forcibly modify device (ex. force eject a cdrom)
+	VIR_DOMAIN_DEVICE_MODIFY_FORCE = C.VIR_DOMAIN_DEVICE_MODIFY_FORCE
 )
 
-//virDomainXMLFlags
+// virDomainXMLFlags
 const (
-	VIR_DOMAIN_XML_SECURE     = C.VIR_DOMAIN_XML_SECURE     //dump security sensitive information too
-	VIR_DOMAIN_XML_INACTIVE   = C.VIR_DOMAIN_XML_INACTIVE   //dump inactive domain information
-	VIR_DOMAIN_XML_UPDATE_CPU = C.VIR_DOMAIN_XML_UPDATE_CPU //update guest CPU requirements according to host CPU
-	VIR_DOMAIN_XML_MIGRATABLE = C.VIR_DOMAIN_XML_MIGRATABLE //dump XML suitable for migration
+	// dump security sensitive information too
+	VIR_DOMAIN_XML_SECURE = C.VIR_DOMAIN_XML_SECURE
+	// dump inactive domain information
+	VIR_DOMAIN_XML_INACTIVE = C.VIR_DOMAIN_XML_INACTIVE
+	// update guest CPU requirements according to host CPU
+	VIR_DOMAIN_XML_UPDATE_CPU = C.VIR_DOMAIN_XML_UPDATE_CPU
+	// dump XML suitable for migration
+	VIR_DOMAIN_XML_MIGRATABLE = C.VIR_DOMAIN_XML_MIGRATABLE
 )
 
 type Domain struct {
@@ -115,15 +150,21 @@ type Domain struct {
 }
 
 type DomainInfo struct {
-	State     uint   //the running state, one of virDomainState
-	MaxMemory uint64 //the maximum memory in KBytes allowed
-	Memory    uint64 //the memory in KBytes used by the domain
-	Vcpus     uint8  //the number of virtual CPUs for the domain
-	CpuTime   uint64 //the CPU time used in nanoseconds
+	// the running state, one of virDomainState
+	State uint
+	// the maximum memory in KBytes allowed
+	MaxMemory uint64
+	// the memory in KBytes used by the domain
+	Memory uint64
+	// the number of virtual CPUs for the domain
+	Vcpus uint8
+	// the CPU time used in nanoseconds
+	CpuTime uint64
 }
 
 type DomainJobInfo struct {
-	JobType       int //Time is measured in milliseconds
+	// Time is measured in milliseconds
+	JobType       int
 	TimeElapsed   uint64
 	TimeRemaining uint64
 	DataTotal     uint64
