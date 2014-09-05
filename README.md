@@ -1,4 +1,5 @@
 # Golibvirt - The virtualization API
+[![GoDoc](https://godoc.org/github.com/cloudescape/golibvirt?status.svg)](https://godoc.org/github.com/cloudescape/golibvirt)
 
 Libvirt is a toolkit to interact with virtualization capabilities
 of recent versions of GNU/Linux (and other OSes). (reference: [Libvirt][libvirt_home])
