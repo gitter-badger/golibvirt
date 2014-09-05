@@ -6,4 +6,5 @@ go:
   - tip
 
 before_install:
-  - sudo apt-get install libvirt-dev pkg-config
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libvirt-dev pkg-config
