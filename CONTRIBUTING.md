@@ -3,7 +3,7 @@
 ## Code of conduct
 *Taken from http://libvirt.org/governance.html with minor adjustments.*
 
-The libvirt project community covers people from a wide variety of countries, backgrounds and positions. This global diversity is a great strength of the project, but can also lead to communication issues, which may in turn cause unhappiness. To maximise happiness of the project community taken as a whole, all members (whether users, contributors or committers) are expected to abide by the project's code of conduct. At a high level the code can be summarized as "be excellent to each other". Expanding on this:
+The open source community covers people from a wide variety of countries, backgrounds and positions. This global diversity is a great strength for this project, but can also lead to communication issues, which may in turn cause unhappiness. To maximise happiness of the project community taken as a whole, all members (whether users, contributors or committers) are expected to abide by the project's code of conduct. At a high level the code can be summarized as "be excellent to each other". Expanding on this:
 
 **Be respectful:** disagreements between people are to be expected and are usually the sign of healthy debate and engagement. Disagreements can lead to frustration and even anger for some members. Turning to personal insults, intimidation or threatening behaviour does not improve the situation. Participants should thus take care to ensure all communications / interactions stay professional at all times.
 
