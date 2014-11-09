@@ -1,4 +1,5 @@
 # Golibvirt - The virtualization API
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cloudescape/golibvirt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![GoDoc](https://godoc.org/github.com/cloudescape/golibvirt?status.svg)](https://godoc.org/github.com/cloudescape/golibvirt)
 [![Build Status](https://travis-ci.org/cloudescape/golibvirt.svg?branch=master)](https://travis-ci.org/cloudescape/golibvirt)
 
